@@ -11,14 +11,16 @@ namespace Isu.Tests
         [SetUp]
         public void Setup()
         {
-            //TODO: implement
-            _isuService = null;
+            //fixed: implement
+            _isuService = new IsuService();
         }
 
         [Test]
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
-            Assert.Fail();
+            Group tempGroup = _isuService.AddGroup("M3204");
+            Student tempStudent = _isuService.AddStudent(tempGroup, "Titov Daniil Yaroslavovich");
+            Assert.Contains(tempStudent, tempGroup.Students);
         }
 
         [Test]
@@ -26,7 +28,11 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-                
+                Group tempGroup = _isuService.AddGroup("M3205");
+                for (int i = 0; i < 22; i++)
+                {
+                    _isuService.AddStudent(tempGroup, "Ivanov Ivan Ivanovich" + i);
+                }
             });
         }
 
@@ -35,17 +41,22 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-
+                var invalidGroupNameFirst = new Group("Sheeeeeesh");
+                var invalidCourseNumber = new Group("M3604");
+                var invalidGroupNameLengthFirst = new Group("M32044");
+                var invalidGroupNameSecond = new Group("M32O4"); // m32o4
+                var invalidGroupNameLengthSecond = new Group("M320");
             });
         }
 
         [Test]
         public void TransferStudentToAnotherGroup_GroupChanged()
         {
-            Assert.Catch<IsuException>(() =>
-            {
-
-            });
+            Group tempGroup1 = _isuService.AddGroup("M3100");
+            Group tempGroup2 = _isuService.AddGroup("M3101");
+            Student tempStudent = _isuService.AddStudent(tempGroup1, "Petr");
+            _isuService.ChangeStudentGroup(tempStudent, tempGroup2);
+            Assert.Contains(tempStudent, tempGroup2.Students);
         }
     }
 }
