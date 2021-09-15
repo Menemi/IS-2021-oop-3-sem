@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Isu.Tools;
 
 namespace Isu.Services
 {
@@ -14,6 +15,7 @@ namespace Isu.Services
         public Group AddGroup(string name)
         {
             var newGroup = new Group(name);
+            _listGroup.Add(newGroup);
             return newGroup;
         }
 
@@ -35,7 +37,7 @@ namespace Isu.Services
                 }
             }
 
-            return null;
+            throw new StudentWasNotFound();
         }
 
         public Student FindStudent(string name)
