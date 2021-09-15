@@ -56,7 +56,7 @@ namespace Isu.Tests
             Group tempGroup2 = _isuService.AddGroup("M3101");
             Student tempStudent = _isuService.AddStudent(tempGroup1, "Petr");
             _isuService.ChangeStudentGroup(tempStudent, tempGroup2);
-            Assert.Contains(tempStudent, tempGroup1.Students);
+            Assert.Contains(tempStudent, tempGroup2.Students);
         }
     }
 }
