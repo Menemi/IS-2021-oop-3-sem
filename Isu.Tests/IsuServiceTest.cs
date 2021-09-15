@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Isu.Services;
 using Isu.Tools;
 using NUnit.Framework;
@@ -21,19 +20,7 @@ namespace Isu.Tests
         {
             Group tempGroup = _isuService.AddGroup("M3204");
             Student tempStudent = _isuService.AddStudent(tempGroup, "Titov Daniil Yaroslavovich");
-
-            if (tempStudent.GroupName != _isuService.FindGroup("M3204").GroupName)
-            {
-                Assert.Fail("Group was not found!");
-            }
-
-            foreach (Student student in _isuService.FindStudents(tempStudent.GroupName))
-            {
-                if (student == tempStudent)
-                    return;
-            }
-
-            Assert.Fail("Student was not found!");
+            Assert.Contains(tempStudent, tempGroup.Students);
         }
 
         [Test]
@@ -65,9 +52,11 @@ namespace Isu.Tests
         [Test]
         public void TransferStudentToAnotherGroup_GroupChanged()
         {
-            Assert.Catch<IsuException>(() =>
-            {
-            });
+            Group tempGroup1 = _isuService.AddGroup("M3100");
+            Group tempGroup2 = _isuService.AddGroup("M3101");
+            Student tempStudent = _isuService.AddStudent(tempGroup1, "Petr");
+            _isuService.ChangeStudentGroup(tempStudent, tempGroup2);
+            Assert.Contains(tempStudent, tempGroup1.Students);
         }
     }
 }

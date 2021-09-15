@@ -28,7 +28,7 @@ namespace Isu.Services
         {
             foreach (Group group in _listGroup)
             {
-                foreach (Student student in group._students)
+                foreach (Student student in group.Students)
                 {
                     if (student.Id == id)
                         return student;
@@ -42,7 +42,7 @@ namespace Isu.Services
         {
             foreach (Group group in _listGroup)
             {
-                foreach (Student student in group._students)
+                foreach (Student student in group.Students)
                 {
                     if (student.Name == name)
                         return student;
@@ -57,7 +57,7 @@ namespace Isu.Services
             foreach (Group group in _listGroup)
             {
                 if (group.GroupName == groupName)
-                    return group._students;
+                    return group.Students;
             }
 
             return null;
@@ -70,7 +70,7 @@ namespace Isu.Services
             {
                 if (group.CourseNumber == courseNumber)
                 {
-                    foreach (Student student in group._students)
+                    foreach (Student student in group.Students)
                         allStudents.Add(student);
                 }
             }

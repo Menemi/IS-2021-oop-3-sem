@@ -1,6 +1,6 @@
 ﻿namespace Isu.Tools
 {
-    public class InvalidCourseNumberException : IsuException
+    public class InvalidCourseNumberIsuException : IsuException
     {
     }
 }

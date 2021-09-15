@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Isu.Tools;
 
 namespace Isu.Services
 {
     public class Group
     {
-        private int _countOfStudents = 0;
         private static readonly int MaxCountOfStudents = 20;
-        public string GroupName { get; set; }
-        public List<Student> _students;
-
-        public CourseNumber CourseNumber { get; }
+        private int _countOfStudents = 0;
 
         public Group(string groupName)
         {
             if (groupName.Length != 5)
             {
-                throw new GroupNameLengthException();
+                throw new GroupNameLengthIsuException();
             }
 
-            if (groupName[2] < 1 || groupName[2] > 4)
+            // M3204
+            if (groupName[2] - '0' < 1 || groupName[2] - '0' > 4)
             {
-                throw new InvalidCourseNumberException();
+                throw new InvalidCourseNumberIsuException();
             }
 
             int tempInt;
@@ -33,8 +29,14 @@ namespace Isu.Services
 
             GroupName = groupName;
             CourseNumber = new CourseNumber(groupName[2]);
-            _students = new List<Student>();
+            Students = new List<Student>();
         }
+
+        public string GroupName { get; set; }
+
+        public List<Student> Students { get; set; }
+
+        public CourseNumber CourseNumber { get; set; }
 
         public void AddStudent(Student student)
         {
@@ -44,18 +46,18 @@ namespace Isu.Services
             }
 
             ++_countOfStudents;
-            _students.Add(student);
-        }
-
-        private bool RemoveStudent(Student student)
-        {
-            return _students.Remove(student);
+            Students.Add(student);
         }
 
         public void MoveStudent(Student student, Group oldGroup)
         {
             oldGroup.RemoveStudent(student);
             AddStudent(student);
+        }
+
+        private bool RemoveStudent(Student student)
+        {
+            return Students.Remove(student);
         }
     }
 }

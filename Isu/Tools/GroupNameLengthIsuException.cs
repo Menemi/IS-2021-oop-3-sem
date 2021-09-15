@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Isu.Tools
+﻿namespace Isu.Tools
 {
-    public class GroupNameLengthException : IsuException
+    public class GroupNameLengthIsuException : IsuException
     {
     }
 }
