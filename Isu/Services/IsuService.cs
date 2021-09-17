@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Isu.Tools;
 
 namespace Isu.Services
 {
     public class IsuService : IIsuService
     {
-        private readonly List<Group> _listGroup;
-
-        public IsuService()
-        {
-            _listGroup = new List<Group>();
-        }
+        private static readonly List<Group> _listGroup = new List<Group>();
 
         public Group AddGroup(string name)
         {
@@ -21,7 +17,7 @@ namespace Isu.Services
 
         public Student AddStudent(Group group, string name) // void -> Student
         {
-            var newStudent = new Student(name, group.GroupName);
+            var newStudent = new Student(name, group);
             group.AddStudent(newStudent);
             return newStudent;
         }
@@ -33,7 +29,9 @@ namespace Isu.Services
                 foreach (Student student in group.Students)
                 {
                     if (student.Id == id)
+                    {
                         return student;
+                    }
                 }
             }
 
@@ -47,7 +45,9 @@ namespace Isu.Services
                 foreach (Student student in group.Students)
                 {
                     if (student.Name == name)
+                    {
                         return student;
+                    }
                 }
             }
 
@@ -93,21 +93,14 @@ namespace Isu.Services
 
         public List<Group> FindGroups(CourseNumber courseNumber)
         {
-            var tempListGroup = new List<Group>();
-            foreach (Group group in _listGroup)
-            {
-                if (group.CourseNumber == courseNumber)
-                    tempListGroup.Add(group);
-            }
-
-            return tempListGroup;
+            return _listGroup.Where(gr => gr.CourseNumber == courseNumber).ToList();
         }
 
         public void ChangeStudentGroup(Student student, Group newGroup)
         {
             foreach (Group group in _listGroup)
             {
-                if (group.GroupName == student.GroupName)
+                if (group.GroupName == student.Group.GroupName)
                 {
                     newGroup.MoveStudent(student, group);
                     return;

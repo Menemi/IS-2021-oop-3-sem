@@ -15,7 +15,6 @@ namespace Isu.Services
                 throw new GroupNameLengthIsuException();
             }
 
-            // M3204
             if (groupName[2] - '0' < 1 || groupName[2] - '0' > 4)
             {
                 throw new InvalidCourseNumberIsuException();
@@ -28,15 +27,15 @@ namespace Isu.Services
             }
 
             GroupName = groupName;
-            CourseNumber = new CourseNumber(groupName[2]);
+            CourseNumber = new CourseNumber(groupName[2] - '0');
             Students = new List<Student>();
         }
 
         public string GroupName { get; set; }
 
-        public List<Student> Students { get; set; }
+        public List<Student> Students { get; }
 
-        public CourseNumber CourseNumber { get; set; }
+        public CourseNumber CourseNumber { get; }
 
         public void AddStudent(Student student)
         {
