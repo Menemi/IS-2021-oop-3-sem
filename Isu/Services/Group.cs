@@ -15,11 +15,6 @@ namespace Isu.Services
                 throw new GroupNameLengthIsuException();
             }
 
-            if (groupName[2] - '0' < 1 || groupName[2] - '0' > 4)
-            {
-                throw new InvalidCourseNumberIsuException();
-            }
-
             int tempInt;
             if (!char.IsUpper(groupName[0]) || !int.TryParse(groupName.Substring(1), out tempInt))
             {
@@ -52,6 +47,11 @@ namespace Isu.Services
         {
             oldGroup.RemoveStudent(student);
             AddStudent(student);
+        }
+
+        public virtual bool Equals(Group leftGroup, Group rightGroup)
+        {
+            return leftGroup.GroupName == rightGroup.GroupName || leftGroup.Students == rightGroup.Students;
         }
 
         private bool RemoveStudent(Student student)

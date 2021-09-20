@@ -100,7 +100,7 @@ namespace Isu.Services
         {
             foreach (Group group in _listGroup)
             {
-                if (group.GroupName == student.Group.GroupName)
+                if (Equals(group, student.Group))
                 {
                     newGroup.MoveStudent(student, group);
                     return;
