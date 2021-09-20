@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Isu.Tools;
 
@@ -100,7 +101,7 @@ namespace Isu.Services
         {
             foreach (Group group in _listGroup)
             {
-                if (Equals(group, student.Group))
+                if (group == student.Group)
                 {
                     newGroup.MoveStudent(student, group);
                     return;

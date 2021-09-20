@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Isu.Tools;
 
 namespace Isu.Services
@@ -49,9 +50,15 @@ namespace Isu.Services
             AddStudent(student);
         }
 
-        public virtual bool Equals(Group leftGroup, Group rightGroup)
+        public new virtual bool Equals(object obj)
         {
-            return leftGroup.GroupName == rightGroup.GroupName || leftGroup.Students == rightGroup.Students;
+            if ((obj == null) || !GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+
+            Group group = (Group)obj;
+            return GroupName == group.GroupName;
         }
 
         private bool RemoveStudent(Student student)
