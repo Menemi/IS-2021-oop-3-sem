@@ -41,15 +41,25 @@ namespace Isu.Services
 
         public Student FindStudent(string name)
         {
+            return FindStudentByPredicate(student => student.Name == name, true);
+        }
+
+        public Student FindStudentByPredicate(Func<Student, bool> pred, bool shouldThrow)
+        {
             foreach (Group group in _listGroup)
             {
                 foreach (Student student in group.Students)
                 {
-                    if (student.Name == name)
+                    if (pred(student))
                     {
                         return student;
                     }
                 }
+            }
+
+            if (shouldThrow)
+            {
+                throw new StudentWasNotFound();
             }
 
             return null;
