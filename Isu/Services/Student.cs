@@ -4,15 +4,15 @@
     {
         private static int _idCounter = 1;
 
-        public Student(string name, string groupName)
+        public Student(string name, Group group)
         {
             Name = name;
+            Group = group;
             Id = _idCounter++;
-            GroupName = groupName;
         }
 
         public string Name { get; set; }
         public int Id { get; set; }
-        public string GroupName { get; set; }
+        public Group Group { get; }
     }
 }
