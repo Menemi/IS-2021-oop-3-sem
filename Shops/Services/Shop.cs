@@ -14,6 +14,7 @@ namespace Shops.Services
         public float Money = 0;
         public List<Product> Products;
 
+        // TODO auto id creater
         public Shop(int id, string name, string address)
         {
             Id = id;
