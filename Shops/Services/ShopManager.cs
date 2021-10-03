@@ -1,53 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using Shops.Tools;
 
 namespace Shops.Services
 {
     public class ShopManager
     {
-        public List<string> Products;
-        public List<Shop> Shops;
-
-        public void CreateShop(string name, string address, int id)
+        public ShopManager()
         {
-            Shops.Add(new Shop(id, name, address));
+            ProductsName = new List<string>();
+            Shops = new List<Shop>();
+        }
+
+        public List<string> ProductsName { get; }
+
+        public List<Shop> Shops { get; }
+
+        public Shop CreateShop(string name, string address)
+        {
+            Shop shop = new Shop(name, address);
+            Shops.Add(shop);
+            return shop;
         }
 
         public void RegisterProduct(string name)
         {
-            Products.Add(name);
+            ProductsName.Add(name);
         }
 
-        // TODO exception
-        public bool AvailabilityOfProducts(List<Product> products, Shop shop)
+        public bool AvailabilityOfProducts(Dictionary<string, int> products, Shop shop)
         {
             foreach (var product in products)
             {
-                bool availability = false;
-                foreach (var shopProduct in shop.Products)
+                if (ProductsName.Contains(product.Key))
                 {
-                    availability = product.Name == shopProduct.Name && product.Amount >= shopProduct.Amount;
+                    foreach (var shopProduct in shop.Products)
+                    {
+                        if (shopProduct.Name == product.Key && product.Value > shopProduct.Amount)
+                        {
+                            throw new NotEnoughProductsAmount();
+                        }
+                    }
                 }
-
-                if (!availability)
+                else
                 {
-                    throw new Exception();
+                    throw new ProductIsNotRegistered();
                 }
             }
 
             return true;
         }
 
-        public float CostOfProductsInTheShop(List<Product> products, Shop shop)
+        public float CostOfProductsInTheShop(Dictionary<string, int> products, Shop shop)
         {
             float resultPrice = 0;
             foreach (var product in products)
             {
                 foreach (var shopProduct in shop.Products)
                 {
-                    if (product.Name == shopProduct.Name)
+                    if (product.Key == shopProduct.Name)
                     {
-                        resultPrice += shopProduct.Price;
+                        resultPrice += product.Value * shopProduct.Price;
                         break;
                     }
                 }
@@ -56,11 +69,11 @@ namespace Shops.Services
             return resultPrice;
         }
 
-        public Shop TheBestShopSearching(List<Product> products)
+        public Shop TheBestShopSearching(Dictionary<string, int> products)
         {
             float minExpenses = int.MaxValue;
-            Shop theBestShop = null;
 
+            Shop theBestShop = null;
             foreach (var shop in Shops)
             {
                 var price = CostOfProductsInTheShop(products, shop);

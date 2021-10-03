@@ -1,74 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
+using Shops.Tools;
 
 namespace Shops.Services
 {
     public class Shop
     {
-        public int Id { get; }
+        private static int _idCounter = 1;
 
-        public string Name { get; }
+        public Shop(string name, string address)
+        {
+            Id = _idCounter++;
+            Name = name;
+            Address = address;
+            Money = 0;
+            Products = new List<Product>();
+        }
+
+        public float Money { get; set; }
+
+        public List<Product> Products { get; }
+
+        private int Id { get; }
+
+        private string Name { get; }
 
         private string Address { get; }
 
-        public float Money = 0;
-        public List<Product> Products;
-
-        // TODO auto id creater
-        public Shop(int id, string name, string address)
+        public void Delivery(List<Product> products, List<string> registeredProducts)
         {
-            Id = id;
-            Name = name;
-            Address = address;
-        }
-
-        // shouldDo == true == Buy
-        // TODO exception
-        public float BuyOrDelivery(List<Product> products, bool shouldDo)
-        {
-            float costOfProducts = 0;
             foreach (var product in products)
             {
-                bool registered = false;
-                foreach (var shopProduct in Products)
+                if (registeredProducts.Contains(product.Name))
                 {
-                    if (product.Name == shopProduct.Name)
+                    if (!Products.Contains(product))
                     {
-                        registered = true;
-                        if (shouldDo)
+                        Products.Add(product);
+                    }
+                    else
+                    {
+                        foreach (var shopProduct in Products)
                         {
-                            shopProduct.Amount -= product.Amount;
-                            costOfProducts += product.Amount * shopProduct.Price;
-                        }
-                        else
-                        {
-                            shopProduct.Amount += product.Amount;
+                            if (product.Name == shopProduct.Name)
+                            {
+                                shopProduct.Amount += product.Amount;
+                                break;
+                            }
                         }
                     }
                 }
-
-                if (!registered)
+                else
                 {
-                    throw new Exception();
+                    throw new ProductIsNotRegistered();
                 }
             }
-
-            return costOfProducts;
         }
 
-        public void Delivery(List<Product> products)
+        public void Buy(Dictionary<string, int> products, List<string> registeredProducts, Customer customer)
         {
-            BuyOrDelivery(products, false);
+            foreach (var product in products)
+            {
+                if (registeredProducts.Contains(product.Key))
+                {
+                    foreach (var shopProduct in Products)
+                    {
+                        if (product.Key == shopProduct.Name)
+                        {
+                            shopProduct.Amount -= product.Value;
+                            customer.Money -= product.Value * shopProduct.Price;
+                            Money += product.Value * shopProduct.Price;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    throw new ProductIsNotRegistered();
+                }
+            }
         }
 
-        public void Buy(List<Product> products, Customer customer)
-        {
-            float costOfProducts = BuyOrDelivery(products, true);
-            customer.Money -= costOfProducts;
-            Money += costOfProducts;
-        }
-
-        // TODO exception
         public void PriceChanging(string name, float price)
         {
             foreach (var product in Products)
@@ -80,7 +91,7 @@ namespace Shops.Services
                 }
             }
 
-            throw new Exception();
+            throw new ProductIsNotRegistered();
         }
     }
 }
