@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Shops.Services;
-using Shops.Tools;
 using NUnit.Framework;
 
 namespace Shops.Tests
@@ -25,41 +24,38 @@ namespace Shops.Tests
             _shopManager.RegisterProduct("Eggs");
             _shopManager.RegisterProduct("Meat");
 
-            var products = new List<Product>
+            var products = new List<ShopProduct>
             {
-                new Product(3, 3, "Milk"),
-                new Product(13, 33, "Meat"),
-                new Product(60, 5, "Eggs")
+                new ShopProduct(3, 3, "Milk"),
+                new ShopProduct(13, 33, "Meat"),
+                new ShopProduct(60, 5, "Eggs")
             };
-            shop.Delivery(products, _shopManager.ProductsName);
+            shop.AddProducts(products);
 
             foreach (var product in products)
             {
-                Assert.Contains(product, shop.Products);
+                Assert.Contains(product, shop.GetProducts());
             }
         }
 
         [Test]
         public void ChangingPriceForSomeProducts()
         {
-            Assert.Catch<ShopsException>(() =>
+            Shop shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
+
+            _shopManager.RegisterProduct("Milk");
+            _shopManager.RegisterProduct("Eggs");
+            _shopManager.RegisterProduct("Meat");
+
+            var products = new List<ShopProduct>
             {
-                Shop shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
+                new ShopProduct(3, 3, "Milk"),
+                new ShopProduct(13, 33, "Meat"),
+                new ShopProduct(60, 5, "Eggs")
+            };
+            shop.AddProducts(products);
 
-                _shopManager.RegisterProduct("Milk");
-                _shopManager.RegisterProduct("Eggs");
-                _shopManager.RegisterProduct("Meat");
-
-                var products = new List<Product>
-                {
-                    new Product(3, 3, "Milk"),
-                    new Product(13, 33, "Meat"),
-                    new Product(60, 5, "Eggs")
-                };
-                shop.Delivery(products, _shopManager.ProductsName);
-
-                shop.PriceChanging("Kilk", 4);
-            });
+            shop.ChangePrice("Meat", 4);
         }
 
         [Test]
@@ -72,21 +68,21 @@ namespace Shops.Tests
             _shopManager.RegisterProduct("Eggs");
             _shopManager.RegisterProduct("Meat");
 
-            var products1 = new List<Product>
+            var products1 = new List<ShopProduct>
             {
-                new Product(3, 3, "Milk"),
-                new Product(13, 33, "Meat"),
-                new Product(60, 5, "Eggs")
+                new ShopProduct(3, 3, "Milk"),
+                new ShopProduct(13, 33, "Meat"),
+                new ShopProduct(60, 5, "Eggs")
             };
-            shop.Delivery(products1, _shopManager.ProductsName);
+            shop.AddProducts(products1);
 
-            var products2 = new List<Product>
+            var products2 = new List<ShopProduct>
             {
-                new Product(3, 4, "Milk"),
-                new Product(13, 34, "Meat"),
-                new Product(60, 5, "Eggs")
+                new ShopProduct(3, 4, "Milk"),
+                new ShopProduct(13, 34, "Meat"),
+                new ShopProduct(60, 5, "Eggs")
             };
-            shop2.Delivery(products2, _shopManager.ProductsName);
+            shop2.AddProducts(products2);
 
             var products = new Dictionary<string, int>
             {
@@ -107,13 +103,13 @@ namespace Shops.Tests
             _shopManager.RegisterProduct("Eggs");
             _shopManager.RegisterProduct("Meat");
 
-            var productsToDelivery = new List<Product>
+            var productsToDelivery = new List<ShopProduct>
             {
-                new Product(3, 3, "Milk"),
-                new Product(13, 33, "Meat"),
-                new Product(60, 5, "Eggs")
+                new ShopProduct(3, 3, "Milk"),
+                new ShopProduct(13, 33, "Meat"),
+                new ShopProduct(60, 5, "Eggs")
             };
-            shop.Delivery(productsToDelivery, _shopManager.ProductsName);
+            shop.AddProducts(productsToDelivery);
 
             var productsToBuy = new Dictionary<string, int>
             {
@@ -123,16 +119,26 @@ namespace Shops.Tests
             };
 
             var shopsMoneyBeforePurchase = shop.Money;
-            Customer customer = new Customer(1000000, "Taylor Swift");
-            int shopsCountOfProductsBeforePurchase = 0, shopsCountOfProductsAfterPurchase = 0;
+            var customer = new Customer(1000000, "Taylor Swift");
+            var shopsCountOfProductsBeforePurchase = shop.GetProducts().Sum(product => product.Amount);
 
-            shopsCountOfProductsBeforePurchase += shop.Products.Sum(product => product.Amount);
-            Assert.True(_shopManager.AvailabilityOfProducts(productsToBuy, shop));
+            foreach (var product in productsToBuy)
+            {
+                Assert.Contains(product.Key, _shopManager.RegisteredProducts);
+                foreach (var shopProduct in shop.GetProducts())
+                {
+                    if (shopProduct.Name == product.Key)
+                    {
+                        Assert.True(product.Value <= shopProduct.Amount);
+                        break;
+                    }
+                }
+            }
+
             Assert.Less(_shopManager.CostOfProductsInTheShop(productsToBuy, shop), customer.Money);
-            shop.Buy(productsToBuy, _shopManager.ProductsName, customer);
+            shop.Buy(productsToBuy, customer);
             Assert.Less(shopsMoneyBeforePurchase, shop.Money);
-            shopsCountOfProductsAfterPurchase += shop.Products.Sum(product => product.Amount);
-            Assert.Less(shopsMoneyBeforePurchase, shopsCountOfProductsAfterPurchase);
+            Assert.Less(shop.GetProducts().Sum(product => product.Amount), shopsCountOfProductsBeforePurchase);
         }
     }
 }

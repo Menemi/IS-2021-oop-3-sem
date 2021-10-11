@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Shops.Tools;
 
 namespace Shops.Services
@@ -8,13 +8,13 @@ namespace Shops.Services
     {
         public ShopManager()
         {
-            ProductsName = new List<string>();
+            RegisteredProducts = new List<string>();
             Shops = new List<Shop>();
         }
 
-        public List<string> ProductsName { get; }
+        public List<string> RegisteredProducts { get; }
 
-        public List<Shop> Shops { get; }
+        private List<Shop> Shops { get; }
 
         public Shop CreateShop(string name, string address)
         {
@@ -25,38 +25,30 @@ namespace Shops.Services
 
         public void RegisterProduct(string name)
         {
-            ProductsName.Add(name);
+            RegisteredProducts.Add(name);
         }
 
-        public bool AvailabilityOfProducts(Dictionary<string, int> products, Shop shop)
+        public void RegistrationCheck(List<ShopProduct> products)
         {
-            foreach (var product in products)
+            if (products.Any(product => !RegisteredProducts.Contains(product.Name)))
             {
-                if (ProductsName.Contains(product.Key))
-                {
-                    foreach (var shopProduct in shop.Products)
-                    {
-                        if (shopProduct.Name == product.Key && product.Value > shopProduct.Amount)
-                        {
-                            throw new NotEnoughProductsAmount();
-                        }
-                    }
-                }
-                else
-                {
-                    throw new ProductIsNotRegistered();
-                }
+                throw new ProductIsNotRegistered();
             }
-
-            return true;
         }
 
+        public void AddProducts(List<ShopProduct> products, Shop shop)
+        {
+            RegistrationCheck(products);
+            shop.AddProducts(products);
+        }
+
+        // do not use without checking the registration
         public float CostOfProductsInTheShop(Dictionary<string, int> products, Shop shop)
         {
             float resultPrice = 0;
             foreach (var product in products)
             {
-                foreach (var shopProduct in shop.Products)
+                foreach (var shopProduct in shop.GetProducts())
                 {
                     if (product.Key == shopProduct.Name)
                     {
