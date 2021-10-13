@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Shops.Services
+﻿namespace Shops.Services
 {
     public class Product
     {
@@ -22,14 +20,9 @@ namespace Shops.Services
             {
                 return false;
             }
-        
+
             Product product = (Product)obj;
             return Id == product.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Name, Id);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Shops.Tools;
 
 namespace Shops.Services
@@ -8,6 +7,8 @@ namespace Shops.Services
     public class Shop
     {
         private static int _idCounter = 1;
+
+        private List<ShopProduct> _products;
 
         public Shop(string name, string address)
         {
@@ -20,8 +21,6 @@ namespace Shops.Services
 
         public float Money { get; set; }
 
-        private List<ShopProduct> _products;
-
         private int Id { get; }
 
         private string Name { get; }
@@ -30,9 +29,13 @@ namespace Shops.Services
 
         public void AddProducts(List<ShopProduct> products)
         {
-            if (products.First() == null)
+            foreach (var product in products)
             {
-                foreach (var product in products)
+                if (!_products.Contains(product))
+                {
+                    _products.Add(product);
+                }
+                else
                 {
                     foreach (var shopProduct in _products)
                     {
@@ -43,10 +46,6 @@ namespace Shops.Services
                         }
                     }
                 }
-            }
-            else
-            {
-                _products.Add(products.First());
             }
         }
 
@@ -59,22 +58,15 @@ namespace Shops.Services
         {
             foreach (var product in products)
             {
-                if (registeredProducts.Contains(product.Product))
+                foreach (var shopProduct in _products)
                 {
-                    foreach (var shopProduct in _products)
+                    if (product.Product.Id == shopProduct.Product.Id && shopProduct.Amount >= product.Amount)
                     {
-                        if (product.Product.Id == shopProduct.Product.Id && shopProduct.Amount >= product.Amount)
-                        {
-                            shopProduct.Amount -= product.Amount;
-                            customer.Money -= product.Amount * shopProduct.Price;
-                            Money += product.Amount * shopProduct.Price;
-                            break;
-                        }
+                        shopProduct.Amount -= product.Amount;
+                        customer.Money -= product.Amount * shopProduct.Price;
+                        Money += product.Amount * shopProduct.Price;
+                        break;
                     }
-                }
-                else
-                {
-                    throw new ProductIsNotRegistered();
                 }
             }
         }

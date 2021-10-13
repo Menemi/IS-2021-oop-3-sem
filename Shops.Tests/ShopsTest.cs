@@ -18,17 +18,17 @@ namespace Shops.Tests
         [Test]
         public void DeliveryOfProductsToTheShop()
         {
-            Shop shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
+            var shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
 
-            _shopManager.RegisterProduct("Milk");
-            _shopManager.RegisterProduct("Eggs");
-            _shopManager.RegisterProduct("Meat");
+            var milk = _shopManager.RegisterProduct("Milk");
+            var meat = _shopManager.RegisterProduct("Eggs");
+            var eggs = _shopManager.RegisterProduct("Meat");
 
             var products = new List<ShopProduct>
             {
-                new ShopProduct(new Product("Milk"), 3, 3),
-                new ShopProduct(new Product("Meat"), 13, 33),
-                new ShopProduct(new Product("Eggs"), 60, 5)
+                new ShopProduct(milk, 3, 3),
+                new ShopProduct(meat, 13, 33),
+                new ShopProduct(eggs, 60, 5)
             };
             shop.AddProducts(products);
 
@@ -41,17 +41,17 @@ namespace Shops.Tests
         [Test]
         public void ChangingPriceForSomeProducts()
         {
-            Shop shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
+            var shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
 
-            _shopManager.RegisterProduct("Milk");
-            _shopManager.RegisterProduct("Eggs");
-            _shopManager.RegisterProduct("Meat");
+            var milk = _shopManager.RegisterProduct("Milk");
+            var meat = _shopManager.RegisterProduct("Eggs");
+            var eggs = _shopManager.RegisterProduct("Meat");
 
             var products = new List<ShopProduct>
             {
-                new ShopProduct(new Product("Milk"), 3, 3),
-                new ShopProduct(new Product("Meat"), 13, 33),
-                new ShopProduct(new Product("Eggs"), 60, 5)
+                new ShopProduct(milk, 3, 3),
+                new ShopProduct(meat, 13, 33),
+                new ShopProduct(eggs, 60, 5)
             };
             shop.AddProducts(products);
 
@@ -61,34 +61,34 @@ namespace Shops.Tests
         [Test]
         public void TheBestShopSearching()
         {
-            Shop shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
-            Shop shop2 = _shopManager.CreateShop("Pyaterochka", "Udarnikov Street 14");
+            var shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
+            var shop2 = _shopManager.CreateShop("Pyaterochka", "Udarnikov Street 14");
 
-            _shopManager.RegisterProduct("Milk");
-            _shopManager.RegisterProduct("Eggs");
-            _shopManager.RegisterProduct("Meat");
-
+            var milk = _shopManager.RegisterProduct("Milk");
+            var meat = _shopManager.RegisterProduct("Eggs");
+            var eggs = _shopManager.RegisterProduct("Meat");
+            
             var products1 = new List<ShopProduct>
             {
-                new ShopProduct(new Product("Milk"), 3, 3),
-                new ShopProduct(new Product("Meat"), 13, 33),
-                new ShopProduct(new Product("Eggs"), 60, 5)
+                new ShopProduct(milk, 3, 3),
+                new ShopProduct(meat, 13, 33),
+                new ShopProduct(eggs, 60, 5)
             };
             shop.AddProducts(products1);
 
             var products2 = new List<ShopProduct>
             {
-                new ShopProduct(new Product("Milk"), 3, 4),
-                new ShopProduct(new Product("Meat"), 13, 34),
-                new ShopProduct(new Product("Eggs"), 60, 5)
+                new ShopProduct(milk, 3, 4),
+                new ShopProduct(meat, 13, 34),
+                new ShopProduct(eggs, 60, 5)
             };
             shop2.AddProducts(products2);
 
             var products = new List<ProductToBuy>
             {
-                new ProductToBuy(new Product("Milk"), 2),
-                new ProductToBuy(new Product("Meat"), 13),
-                new ProductToBuy(new Product("Eggs"), 60)
+                new ProductToBuy(milk, 2),
+                new ProductToBuy(meat, 13),
+                new ProductToBuy(eggs, 60)
             };
 
             Assert.AreEqual(_shopManager.TheBestShopSearching(products), shop);
@@ -97,25 +97,25 @@ namespace Shops.Tests
         [Test]
         public void BuyingOfProductsInTheShop()
         {
-            Shop shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
-
-            _shopManager.RegisterProduct("Milk");
-            _shopManager.RegisterProduct("Eggs");
-            _shopManager.RegisterProduct("Meat");
-
+            var shop = _shopManager.CreateShop("Pyaterochka", "Industrial Avenue 18");
+            
+            var milk = _shopManager.RegisterProduct("Milk");
+            var meat = _shopManager.RegisterProduct("Eggs");
+            var eggs = _shopManager.RegisterProduct("Meat");
+            
             var productsToDelivery = new List<ShopProduct>
             {
-                new ShopProduct(new Product("Milk"), 3, 3),
-                new ShopProduct(new Product("Meat"), 13, 33),
-                new ShopProduct(new Product("Eggs"), 60, 5)
+                new ShopProduct(milk, 3, 3),
+                new ShopProduct(meat, 13, 33),
+                new ShopProduct(eggs, 60, 5)
             };
             shop.AddProducts(productsToDelivery);
 
             var productsToBuy = new List<ProductToBuy>
             {
-                new ProductToBuy(new Product("Milk"), 2),
-                new ProductToBuy(new Product("Meat"), 12),
-                new ProductToBuy(new Product("Eggs"), 59)
+                new ProductToBuy(milk, 2),
+                new ProductToBuy(meat, 12),
+                new ProductToBuy(eggs, 59)
             };
 
             var shopsMoneyBeforePurchase = shop.Money;

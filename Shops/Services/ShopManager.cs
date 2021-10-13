@@ -23,9 +23,11 @@ namespace Shops.Services
             return shop;
         }
 
-        public void RegisterProduct(string name)
+        public Product RegisterProduct(string name)
         {
-            RegisteredProducts.Add(new Product(name));
+            Product product = new Product(name);
+            RegisteredProducts.Add(product);
+            return product;
         }
 
         public void RegistrationCheck(List<ShopProduct> products)
