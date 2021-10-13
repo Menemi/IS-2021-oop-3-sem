@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Shops.Tools;
 
 namespace Shops.Services
@@ -14,12 +15,12 @@ namespace Shops.Services
             Name = name;
             Address = address;
             Money = 0;
-            Products = new List<ShopProduct>();
+            _products = new List<ShopProduct>();
         }
 
         public float Money { get; set; }
 
-        private List<ShopProduct> Products { get; }
+        private List<ShopProduct> _products;
 
         private int Id { get; }
 
@@ -29,17 +30,13 @@ namespace Shops.Services
 
         public void AddProducts(List<ShopProduct> products)
         {
-            foreach (var product in products)
+            if (products.First() == null)
             {
-                if (!Products.Contains(product))
+                foreach (var product in products)
                 {
-                    Products.Add(product);
-                }
-                else
-                {
-                    foreach (var shopProduct in Products)
+                    foreach (var shopProduct in _products)
                     {
-                        if (product.Name == shopProduct.Name)
+                        if (product.Product.Name == shopProduct.Product.Name)
                         {
                             shopProduct.Amount += product.Amount;
                             break;
@@ -47,35 +44,46 @@ namespace Shops.Services
                     }
                 }
             }
+            else
+            {
+                _products.Add(products.First());
+            }
         }
 
         public ReadOnlyCollection<ShopProduct> GetProducts()
         {
-            return Products.AsReadOnly();
+            return _products.AsReadOnly();
         }
 
-        public void Buy(Dictionary<string, int> products, Customer customer)
+        public void Buy(List<ProductToBuy> products, Customer customer, List<Product> registeredProducts)
         {
             foreach (var product in products)
             {
-                foreach (var shopProduct in Products)
+                if (registeredProducts.Contains(product.Product))
                 {
-                    if (product.Key == shopProduct.Name && shopProduct.Amount >= product.Value)
+                    foreach (var shopProduct in _products)
                     {
-                        shopProduct.Amount -= product.Value;
-                        customer.Money -= product.Value * shopProduct.Price;
-                        Money += product.Value * shopProduct.Price;
-                        break;
+                        if (product.Product.Id == shopProduct.Product.Id && shopProduct.Amount >= product.Amount)
+                        {
+                            shopProduct.Amount -= product.Amount;
+                            customer.Money -= product.Amount * shopProduct.Price;
+                            Money += product.Amount * shopProduct.Price;
+                            break;
+                        }
                     }
+                }
+                else
+                {
+                    throw new ProductIsNotRegistered();
                 }
             }
         }
 
         public void ChangePrice(string name, float price)
         {
-            foreach (var product in Products)
+            foreach (var product in _products)
             {
-                if (product.Name == name)
+                if (product.Product.Name == name)
                 {
                     product.Price = price;
                     return;

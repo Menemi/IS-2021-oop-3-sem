@@ -8,11 +8,11 @@ namespace Shops.Services
     {
         public ShopManager()
         {
-            RegisteredProducts = new List<string>();
+            RegisteredProducts = new List<Product>();
             Shops = new List<Shop>();
         }
 
-        public List<string> RegisteredProducts { get; }
+        public List<Product> RegisteredProducts { get; }
 
         private List<Shop> Shops { get; }
 
@@ -25,12 +25,12 @@ namespace Shops.Services
 
         public void RegisterProduct(string name)
         {
-            RegisteredProducts.Add(name);
+            RegisteredProducts.Add(new Product(name));
         }
 
         public void RegistrationCheck(List<ShopProduct> products)
         {
-            if (products.Any(product => !RegisteredProducts.Contains(product.Name)))
+            if (products.Any(product => !RegisteredProducts.Contains(product.Product)))
             {
                 throw new ProductIsNotRegistered();
             }
@@ -43,16 +43,16 @@ namespace Shops.Services
         }
 
         // do not use without checking the registration
-        public float CostOfProductsInTheShop(Dictionary<string, int> products, Shop shop)
+        public float CostOfProductsInTheShop(List<ProductToBuy> products, Shop shop)
         {
             float resultPrice = 0;
             foreach (var product in products)
             {
                 foreach (var shopProduct in shop.GetProducts())
                 {
-                    if (product.Key == shopProduct.Name)
+                    if (product.Product.Id == shopProduct.Product.Id)
                     {
-                        resultPrice += product.Value * shopProduct.Price;
+                        resultPrice += product.Amount * shopProduct.Price;
                         break;
                     }
                 }
@@ -61,7 +61,7 @@ namespace Shops.Services
             return resultPrice;
         }
 
-        public Shop TheBestShopSearching(Dictionary<string, int> products)
+        public Shop TheBestShopSearching(List<ProductToBuy> products)
         {
             float minExpenses = int.MaxValue;
 

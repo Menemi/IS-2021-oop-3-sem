@@ -2,23 +2,20 @@
 
 namespace Shops
 {
-    public class ShopProduct : Product
+    public class ShopProduct
     {
-        private static int _idCounter = 1;
-
-        public ShopProduct(int amount, float price, string name)
-            : base(name)
+        public ShopProduct(Product product, int amount, float price)
         {
+            Product = product;
             Price = price;
             Amount = amount;
-            Id = _idCounter++;
         }
+
+        public Product Product { get; }
 
         public float Price { get; set; }
 
         public int Amount { get; set; }
-
-        public int Id { get; set; }
 
         public new virtual bool Equals(object obj)
         {
@@ -27,8 +24,8 @@ namespace Shops
                 return false;
             }
 
-            ShopProduct product = (ShopProduct)obj;
-            return Id == product.Id;
+            ShopProduct tempProduct = (ShopProduct)obj;
+            return Product == tempProduct.Product;
         }
     }
 }

@@ -26,9 +26,9 @@ namespace Shops.Tests
 
             var products = new List<ShopProduct>
             {
-                new ShopProduct(3, 3, "Milk"),
-                new ShopProduct(13, 33, "Meat"),
-                new ShopProduct(60, 5, "Eggs")
+                new ShopProduct(new Product("Milk"), 3, 3),
+                new ShopProduct(new Product("Meat"), 13, 33),
+                new ShopProduct(new Product("Eggs"), 60, 5)
             };
             shop.AddProducts(products);
 
@@ -49,9 +49,9 @@ namespace Shops.Tests
 
             var products = new List<ShopProduct>
             {
-                new ShopProduct(3, 3, "Milk"),
-                new ShopProduct(13, 33, "Meat"),
-                new ShopProduct(60, 5, "Eggs")
+                new ShopProduct(new Product("Milk"), 3, 3),
+                new ShopProduct(new Product("Meat"), 13, 33),
+                new ShopProduct(new Product("Eggs"), 60, 5)
             };
             shop.AddProducts(products);
 
@@ -70,25 +70,25 @@ namespace Shops.Tests
 
             var products1 = new List<ShopProduct>
             {
-                new ShopProduct(3, 3, "Milk"),
-                new ShopProduct(13, 33, "Meat"),
-                new ShopProduct(60, 5, "Eggs")
+                new ShopProduct(new Product("Milk"), 3, 3),
+                new ShopProduct(new Product("Meat"), 13, 33),
+                new ShopProduct(new Product("Eggs"), 60, 5)
             };
             shop.AddProducts(products1);
 
             var products2 = new List<ShopProduct>
             {
-                new ShopProduct(3, 4, "Milk"),
-                new ShopProduct(13, 34, "Meat"),
-                new ShopProduct(60, 5, "Eggs")
+                new ShopProduct(new Product("Milk"), 3, 4),
+                new ShopProduct(new Product("Meat"), 13, 34),
+                new ShopProduct(new Product("Eggs"), 60, 5)
             };
             shop2.AddProducts(products2);
 
-            var products = new Dictionary<string, int>
+            var products = new List<ProductToBuy>
             {
-                {"Milk", 2},
-                {"Meat", 13},
-                {"Eggs", 60}
+                new ProductToBuy(new Product("Milk"), 2),
+                new ProductToBuy(new Product("Meat"), 13),
+                new ProductToBuy(new Product("Eggs"), 60)
             };
 
             Assert.AreEqual(_shopManager.TheBestShopSearching(products), shop);
@@ -105,17 +105,17 @@ namespace Shops.Tests
 
             var productsToDelivery = new List<ShopProduct>
             {
-                new ShopProduct(3, 3, "Milk"),
-                new ShopProduct(13, 33, "Meat"),
-                new ShopProduct(60, 5, "Eggs")
+                new ShopProduct(new Product("Milk"), 3, 3),
+                new ShopProduct(new Product("Meat"), 13, 33),
+                new ShopProduct(new Product("Eggs"), 60, 5)
             };
             shop.AddProducts(productsToDelivery);
 
-            var productsToBuy = new Dictionary<string, int>
+            var productsToBuy = new List<ProductToBuy>
             {
-                {"Milk", 2},
-                {"Meat", 12},
-                {"Eggs", 59}
+                new ProductToBuy(new Product("Milk"), 2),
+                new ProductToBuy(new Product("Meat"), 12),
+                new ProductToBuy(new Product("Eggs"), 59)
             };
 
             var shopsMoneyBeforePurchase = shop.Money;
@@ -124,19 +124,19 @@ namespace Shops.Tests
 
             foreach (var product in productsToBuy)
             {
-                Assert.Contains(product.Key, _shopManager.RegisteredProducts);
+                Assert.Contains(product.Product, _shopManager.RegisteredProducts);
                 foreach (var shopProduct in shop.GetProducts())
                 {
-                    if (shopProduct.Name == product.Key)
+                    if (shopProduct.Product.Id == product.Product.Id)
                     {
-                        Assert.True(product.Value <= shopProduct.Amount);
+                        Assert.True(product.Amount <= shopProduct.Amount);
                         break;
                     }
                 }
             }
 
             Assert.Less(_shopManager.CostOfProductsInTheShop(productsToBuy, shop), customer.Money);
-            shop.Buy(productsToBuy, customer);
+            shop.Buy(productsToBuy, customer, _shopManager.RegisteredProducts);
             Assert.Less(shopsMoneyBeforePurchase, shop.Money);
             Assert.Less(shop.GetProducts().Sum(product => product.Amount), shopsCountOfProductsBeforePurchase);
         }
