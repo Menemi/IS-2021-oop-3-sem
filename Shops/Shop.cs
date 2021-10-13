@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Shops.Tools;
 
 namespace Shops.Services
@@ -31,21 +32,14 @@ namespace Shops.Services
         {
             foreach (var product in products)
             {
-                if (!_products.Contains(product))
+                var productInShop = _products.FirstOrDefault(p => product == p);
+                if (productInShop == null)
                 {
                     _products.Add(product);
+                    continue;
                 }
-                else
-                {
-                    foreach (var shopProduct in _products)
-                    {
-                        if (product.Product.Name == shopProduct.Product.Name)
-                        {
-                            shopProduct.Amount += product.Amount;
-                            break;
-                        }
-                    }
-                }
+
+                productInShop.Amount += product.Amount;
             }
         }
 
@@ -54,7 +48,7 @@ namespace Shops.Services
             return _products.AsReadOnly();
         }
 
-        public void Buy(List<ProductToBuy> products, Customer customer, List<Product> registeredProducts)
+        public void Buy(List<ProductToBuy> products, Customer customer)
         {
             foreach (var product in products)
             {
@@ -73,13 +67,10 @@ namespace Shops.Services
 
         public void ChangePrice(string name, float price)
         {
-            foreach (var product in _products)
+            foreach (var product in _products.Where(product => product.Product.Name == name))
             {
-                if (product.Product.Name == name)
-                {
-                    product.Price = price;
-                    return;
-                }
+                product.Price = price;
+                return;
             }
 
             throw new ProductIsNotRegistered();

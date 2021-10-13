@@ -136,7 +136,7 @@ namespace Shops.Tests
             }
 
             Assert.Less(_shopManager.CostOfProductsInTheShop(productsToBuy, shop), customer.Money);
-            shop.Buy(productsToBuy, customer, _shopManager.RegisteredProducts);
+            shop.Buy(productsToBuy, customer);
             Assert.Less(shopsMoneyBeforePurchase, shop.Money);
             Assert.Less(shop.GetProducts().Sum(product => product.Amount), shopsCountOfProductsBeforePurchase);
         }
