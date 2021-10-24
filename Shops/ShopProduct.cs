@@ -1,4 +1,5 @@
-﻿using Shops.Services;
+﻿using System;
+using Shops.Services;
 
 namespace Shops
 {
@@ -27,15 +28,14 @@ namespace Shops
             _price = price;
         }
 
-        public new virtual bool Equals(object obj)
+        public override int GetHashCode()
         {
-            if ((obj == null) || !GetType().Equals(obj.GetType()))
-            {
-                return false;
-            }
+            return HashCode.Combine(_price, Product, Amount);
+        }
 
-            ShopProduct tempProduct = (ShopProduct)obj;
-            return Product == tempProduct.Product;
+        protected bool Equals(ShopProduct other)
+        {
+            return _price.Equals(other._price) && Equals(Product, other.Product) && Amount == other.Amount;
         }
     }
 }

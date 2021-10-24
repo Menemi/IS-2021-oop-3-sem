@@ -115,24 +115,14 @@ namespace Shops.Tests
             var customer = new Customer(1000000, "Taylor Swift");
             var shopsCountOfProductsBeforePurchase = _shop.GetProducts().Sum(product => product.Amount);
 
-
-            foreach (var product in productsToBuy)
-            {
-                // без foreach тут не обойтись, я просмотрел все методы CollectionAssert
-                // и там нет нужного,который бы это делал без заданного мной цикла
-                CollectionAssert.Contains(_shopManager.RegisteredProducts, product.Product);
-
-                foreach (var shopProduct in _shop.GetProducts()
-                    .Where(shopProduct => shopProduct.Product.Id == product.Product.Id))
-                {
-                    Assert.True(product.Amount <= shopProduct.Amount);
-                    break;
-                }
-            }
+            Assert.False( productsToBuy
+                .Any(product => _shop.GetProducts()
+                    .Where(shopProduct => shopProduct.Product.Id == product.Product.Id)
+                    .Any(shopProduct => product.Amount > shopProduct.Amount)));
 
             var customersMoneyBeforePurchase = customer.Money;
             _shopManager.Buy(productsToBuy, customer, _shop);
-            
+
             Assert.Less(_shopManager.CostOfProductsInTheShop(productsToBuy, _shop), customersMoneyBeforePurchase);
             Assert.Less(shopsMoneyBeforePurchase, _shop.Money);
             Assert.Less(_shop.GetProducts().Sum(product => product.Amount), shopsCountOfProductsBeforePurchase);
