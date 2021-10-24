@@ -12,7 +12,9 @@
         }
 
         public string Name { get; set; }
+
         public int Id { get; set; }
+
         public Group Group { get; }
     }
 }
