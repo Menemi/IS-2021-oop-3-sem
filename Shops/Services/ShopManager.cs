@@ -38,10 +38,24 @@ namespace Shops.Services
             }
         }
 
+        public void RegistrationCheck(List<ProductToBuy> products)
+        {
+            if (products.Any(product => !RegisteredProducts.Contains(product.Product)))
+            {
+                throw new ProductIsNotRegistered();
+            }
+        }
+
         public void AddProducts(List<ShopProduct> products, Shop shop)
         {
             RegistrationCheck(products);
             shop.AddProducts(products);
+        }
+
+        public void Buy(List<ProductToBuy> products, Customer customer, Shop shop)
+        {
+            RegistrationCheck(products);
+            shop.Buy(products, customer);
         }
 
         // do not use without checking the registration
@@ -50,13 +64,11 @@ namespace Shops.Services
             float resultPrice = 0;
             foreach (var product in products)
             {
-                foreach (var shopProduct in shop.GetProducts())
+                foreach (var shopProduct in shop.GetProducts()
+                    .Where(shopProduct => product.Product.Id == shopProduct.Product.Id))
                 {
-                    if (product.Product.Id == shopProduct.Product.Id)
-                    {
-                        resultPrice += product.Amount * shopProduct.Price;
-                        break;
-                    }
+                    resultPrice += product.Amount * shopProduct.GetPrice();
+                    break;
                 }
             }
 

@@ -52,15 +52,25 @@ namespace Shops.Services
         {
             foreach (var product in products)
             {
-                foreach (var shopProduct in _products)
+                foreach (var shopProduct in _products
+                    .Where(shopProduct => product.Product.Id == shopProduct.Product.Id))
                 {
-                    if (product.Product.Id == shopProduct.Product.Id && shopProduct.Amount >= product.Amount)
+                    if (shopProduct.Amount < product.Amount)
                     {
-                        shopProduct.Amount -= product.Amount;
-                        customer.Money -= product.Amount * shopProduct.Price;
-                        Money += product.Amount * shopProduct.Price;
-                        break;
+                        throw new NotEnoughProductsAmount();
                     }
+
+                    var enoughMoneyToBuy = product.Amount * shopProduct.GetPrice();
+
+                    if (customer.Money < enoughMoneyToBuy)
+                    {
+                        throw new NotEnoughMoneyException();
+                    }
+
+                    shopProduct.Amount -= product.Amount;
+                    customer.Money -= enoughMoneyToBuy;
+                    Money += product.Amount * shopProduct.GetPrice();
+                    break;
                 }
             }
         }
@@ -69,7 +79,7 @@ namespace Shops.Services
         {
             foreach (var product in _products.Where(product => product.Product.Name == name))
             {
-                product.Price = price;
+                product.SetPrice(price);
                 return;
             }
 

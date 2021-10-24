@@ -1,4 +1,6 @@
-﻿namespace Shops.Services
+﻿using System;
+
+namespace Shops.Services
 {
     public class Product
     {
@@ -14,15 +16,14 @@
 
         public int Id { get; }
 
-        public new virtual bool Equals(object obj)
+        public override int GetHashCode()
         {
-            if ((obj == null) || !GetType().Equals(obj.GetType()))
-            {
-                return false;
-            }
+            return HashCode.Combine(Name, Id);
+        }
 
-            Product product = (Product)obj;
-            return Id == product.Id;
+        protected bool Equals(Product other)
+        {
+            return Name == other.Name && Id == other.Id;
         }
     }
 }
