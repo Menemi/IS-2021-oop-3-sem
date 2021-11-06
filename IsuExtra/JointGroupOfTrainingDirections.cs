@@ -3,15 +3,6 @@ using System.Collections.ObjectModel;
 
 namespace IsuExtra
 {
-    public enum MegaFaculty
-    {
-        TINT = 0,
-        KTU,
-        FT,
-        BTINS,
-        FTMI,
-    }
-
     public class JointGroupOfTrainingDirections
     {
         private MegaFaculty _megaFaculty;

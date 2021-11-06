@@ -23,7 +23,7 @@ namespace IsuExtra
 
         private MegaFaculty MegaFaculty { get; }
 
-        public ReadOnlyCollection<ComplementedStudent> GetProducts()
+        public ReadOnlyCollection<ComplementedStudent> GetStudents()
         {
             return _complementedStudent.AsReadOnly();
         }

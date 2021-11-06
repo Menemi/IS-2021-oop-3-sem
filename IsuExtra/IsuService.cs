@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Isu.Tools;
 using IsuExtra.Exceptions;
 
 namespace IsuExtra
@@ -30,7 +29,7 @@ namespace IsuExtra
         {
             if (streams.Any(stream => stream.MegaFaculty != megaFaculty))
             {
-                throw new WrongMegaFacultyException();
+                throw new WrongMegaFacultyException($"Stream's MegaFaculty doesn't match the Jgtd's MegaFaculty");
             }
 
             var newJgtd = new JointGroupOfTrainingDirections(megaFaculty, streams);
@@ -40,13 +39,15 @@ namespace IsuExtra
 
         public List<Stream> GetStreamsByCourse(MegaFaculty megaFaculty)
         {
-            foreach (var jgtd in _listJgtd
-                .Where(jgtd => jgtd.GetMegaFaculty() == megaFaculty))
+            var tempJgtd =
+                _listJgtd.First(jgtd => jgtd.GetMegaFaculty() == megaFaculty);
+
+            if (tempJgtd == null)
             {
-                return jgtd.GetStreams().ToList();
+                throw new MegaFacultyDoesNotExcist();
             }
 
-            throw new MegaFacultyDoesNotExcist();
+            return tempJgtd.GetStreams().ToList();
         }
 
         public ReadOnlyCollection<ComplementedStudent> GetStudentsByStream(Stream stream)

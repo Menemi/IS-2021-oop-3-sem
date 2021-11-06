@@ -25,12 +25,17 @@ namespace IsuExtra
             return ClassTime;
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is Class @class && Equals(@class);
+        }
+
         public override int GetHashCode()
         {
             return HashCode.Combine(Name, ClassTime, Teacher, Auditorium);
         }
 
-        protected bool Equals(Class other)
+        private bool Equals(Class other)
         {
             return Name == other.Name && ClassTime == other.ClassTime &&
                    Teacher == other.Teacher && Auditorium == other.Auditorium;

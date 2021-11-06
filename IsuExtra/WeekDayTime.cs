@@ -2,47 +2,31 @@
 
 namespace IsuExtra
 {
-    public enum WeekDay
-    {
-        Monday = 1,
-        Tuesday,
-        Wednesday,
-        Thursday,
-        Friday,
-        Saturday,
-        Sunday,
-    }
-
-    public enum ClassTime
-    {
-        Zero = 0,
-        First,
-        Second,
-        Third,
-        Fourth,
-        Fifth,
-    }
-
     public class WeekDayTime
     {
-        public WeekDayTime(WeekDay day, ClassTime time)
+        public WeekDayTime(WeekDay day, ClassNumber number)
         {
             Day = day;
-            Time = time;
+            Number = number;
         }
 
         private WeekDay Day { get; }
 
-        private ClassTime Time { get; }
+        private ClassNumber Number { get; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is WeekDayTime time && Equals(time);
+        }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Day, Time);
+            return HashCode.Combine(Day, Number);
         }
 
-        protected bool Equals(WeekDayTime other)
+        private bool Equals(WeekDayTime other)
         {
-            return Day == other.Day && Time == other.Time;
+            return Day == other.Day && Number == other.Number;
         }
     }
 }

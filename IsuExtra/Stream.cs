@@ -31,7 +31,8 @@ namespace IsuExtra
         {
             if (_countOfStudents == MaxCountOfStudents)
             {
-                throw new MaxStudentsException();
+                throw new MaxStudentsException(
+                    $"{MaxCountOfStudents} is the limit of students in a {MegaFaculty} stream");
             }
 
             if (student.ComplementedGroup.GetMegaFaculty() == MegaFaculty)
@@ -41,24 +42,17 @@ namespace IsuExtra
 
             if (student.GetCountOfJgtd() == 2)
             {
-                throw new LimitedNumberOfPlacesException();
+                throw new LimitedNumberOfPlacesException($"2 is the max count of jgtd");
             }
 
-            var tempTimetable = new List<Class>();
-
-            foreach (var streamClass in Timetable)
+            if (Timetable.Any(streamClass =>
+                student.GetTimetable().Any(studentClass => studentClass.GetClassTime() == streamClass.GetClassTime())))
             {
-                if (student.GetTimetable()
-                    .Any(studentClass => studentClass.GetClassTime() == streamClass.GetClassTime()))
-                {
-                    throw new IntersectionInTimetable();
-                }
-
-                tempTimetable.Add(streamClass);
+                throw new IntersectionInTimetable();
             }
 
             ++_countOfStudents;
-            student.AddClasses(tempTimetable);
+            student.AddClasses(Timetable);
             student.SetCountOfJgtd(student.GetCountOfJgtd() + 1);
             _students.Add(student);
         }
@@ -67,7 +61,7 @@ namespace IsuExtra
         {
             if (student.GetCountOfJgtd() == 0 || !_students.Contains(student))
             {
-                throw new StreamDoesNotIncludeStudent();
+                throw new StreamDoesNotIncludeStudent($"{MegaFaculty} stream doesn't include student");
             }
 
             foreach (var streamClass in Timetable)
