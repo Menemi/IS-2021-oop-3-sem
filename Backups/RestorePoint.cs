@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using System.IO.Compression;
-using Backups.Exceptions;
 
 namespace Backups
 {
@@ -12,7 +10,7 @@ namespace Backups
 
         private int _id;
 
-        public RestorePoint(string restorePointName, string storageType, string backupPlace)
+        public RestorePoint(string restorePointName, string backupPlace)
         {
             _id = _idCounter++;
             _path = backupPlace;
@@ -23,52 +21,16 @@ namespace Backups
             {
                 directory.Create();
             }
-
-            switch (storageType.ToLower())
-            {
-                case "split":
-                    Split(restorePointName, _path);
-                    break;
-                case "single":
-                    Single(restorePointName, _path);
-                    break;
-                default:
-                    throw new WrongStorageTypeException();
-            }
         }
 
-        private void Single(string restorePointName, string backupPlace)
+        public RestorePoint()
         {
-            var jobObjectsDirectory = new DirectoryInfo(@$"{backupPlace}\Job Objects");
-            if (jobObjectsDirectory.GetFiles().Length == 0)
-            {
-                return;
-            }
-
-            var restorePointDirectory = restorePointName + _id;
-            var archiveName = "Files_" + _id;
-            var startPath = @$"{backupPlace}\Job Objects";
-            var zipPath =
-                @$"{backupPlace}\{restorePointDirectory}\{archiveName}.zip";
-            ZipFile.CreateFromDirectory(startPath, zipPath);
+            _id = _idCounter++;
         }
 
-        private void Split(string restorePointName, string backupPlace)
+        public int GetId()
         {
-            var restorePointDirectory = restorePointName + _id;
-            var jobObjectsDirectory = new DirectoryInfo(@$"{backupPlace}\Job Objects");
-
-            foreach (var file in jobObjectsDirectory.GetFiles())
-            {
-                var archiveName =
-                    Path.GetFileNameWithoutExtension(@$"{backupPlace}/Job Objects/{file.Name}") + "_" + _id;
-
-                var pathFileToAdd = @$"{backupPlace}\Job Objects\{file.Name}";
-                var zipPath = @$"{backupPlace}\{restorePointDirectory}\{archiveName}.zip";
-
-                using var zipArchive = ZipFile.Open(zipPath, ZipArchiveMode.Create);
-                zipArchive.CreateEntryFromFile(pathFileToAdd, file.Name);
-            }
+            return _id;
         }
     }
 }
