@@ -1,7 +1,11 @@
-﻿namespace Backups
+﻿using System.Collections.Generic;
+
+namespace Backups
 {
     public interface IStorageType
     {
-        public bool StorageSaver(string storageType, string restorePointName, string backupPlace, int id);
+        public void StorageSaver(string storageType, string restorePointName, string backupPlace, int id);
+
+        public List<List<MyFile>> StorageSaver(string storageType, List<MyFile> files);
     }
 }
