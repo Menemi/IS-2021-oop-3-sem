@@ -6,7 +6,7 @@ namespace Backups
     {
         private static int _idCounter = 1;
 
-        private static string _path = @"D:\ITMOre than a university\1Menemi1\Backups\BackupDirectory";
+        private static string _path;
 
         private int _id;
 
