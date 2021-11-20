@@ -4,8 +4,8 @@ namespace Backups
 {
     public interface IStorageType
     {
-        public void StorageSaver(string storageType, string restorePointName, string backupPlace, int id);
+        public void StorageSaver(StorageType storageType, string restorePointName, string backupPlace, int id);
 
-        public List<List<MyFile>> StorageSaver(string storageType, List<MyFile> files);
+        public List<List<MyFile>> StorageSaver(StorageType storageType, List<MyFile> files);
     }
 }

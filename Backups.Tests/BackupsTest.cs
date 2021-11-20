@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using NUnit.Framework;
 
 namespace Backups.Tests
@@ -14,8 +13,8 @@ namespace Backups.Tests
         [SetUp]
         public void Setup()
         {
-            _splitBackupJob = new BackupJob("split");
-            _singleBackupJob = new BackupJob("single");
+            _splitBackupJob = new BackupJob(StorageType.Split);
+            _singleBackupJob = new BackupJob(StorageType.Single);
         }
 
         // Local test with real files

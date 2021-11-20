@@ -10,13 +10,13 @@ namespace Backups
     {
         private static int _idCounter = 1;
 
-        private string _storageType;
+        private StorageType _storageType;
 
         private List<RestorePoint> _restorePoints;
 
         private int _id;
 
-        public BackupJob(string storageType)
+        public BackupJob(StorageType storageType)
         {
             _id = _idCounter++;
             _storageType = storageType;
@@ -57,14 +57,14 @@ namespace Backups
             return StorageSaver(_storageType, files);
         }
 
-        public void StorageSaver(string storageType, string restorePointName, string backupPlace, int id)
+        public void StorageSaver(StorageType storageType, string restorePointName, string backupPlace, int id)
         {
-            switch (storageType.ToLower())
+            switch (storageType)
             {
-                case "split":
+                case StorageType.Split:
                     Split(restorePointName, backupPlace, id);
                     break;
-                case "single":
+                case StorageType.Single:
                     Single(restorePointName, backupPlace, id);
                     break;
                 default:
@@ -72,13 +72,13 @@ namespace Backups
             }
         }
 
-        public List<List<MyFile>> StorageSaver(string storageType, List<MyFile> files)
+        public List<List<MyFile>> StorageSaver(StorageType storageType, List<MyFile> files)
         {
-            switch (storageType.ToLower())
+            switch (storageType)
             {
-                case "split":
+                case StorageType.Split:
                     return VirtualSplit(files);
-                case "single":
+                case StorageType.Single:
                     return VirtualSingle(files);
                 default:
                     throw new WrongStorageTypeException();
