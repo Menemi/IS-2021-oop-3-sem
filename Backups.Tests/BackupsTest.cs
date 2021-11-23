@@ -37,17 +37,15 @@ namespace Backups.Tests
                 file3
             };
 
-            foreach (var file in files)
-            {
-                _backupJob.AddJobObject(file);
-            }
-
-            var restorePoint1 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
-            var restorePoint2 = _backupJob.AddRestorePoint(_singleSaver, _singleLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
-            _backupJob.DeleteJobObject(file1);
+            var restorePoint1 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, files,
+                "RestorePoint", _path);
+            var restorePoint2 = _backupJob.AddRestorePoint(_singleSaver, _singleLocalSaver, StorageType.Virtual, files,
+                "RestorePoint", _path);
             files.Remove(file1);
-            var restorePoint3 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
-            var restorePoint4 = _backupJob.AddRestorePoint(_singleSaver, _singleLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
+            var restorePoint3 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, files,
+                "RestorePoint", _path);
+            var restorePoint4 = _backupJob.AddRestorePoint(_singleSaver, _singleLocalSaver, StorageType.Virtual, files,
+                "RestorePoint", _path);
 
             Assert.True(restorePoint1.GetRepositories().Count == 3);
             Assert.True(restorePoint2.GetRepositories().Count == 1);

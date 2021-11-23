@@ -11,11 +11,16 @@ namespace Backups
 
         private List<Repository> _repositories;
 
-        public RestorePoint(string restorePointName, string backupPlace)
+        public RestorePoint(string restorePointName, string backupPlace, StorageType storageType)
         {
             Id = _idCounter++;
             _path = backupPlace;
             _repositories = new List<Repository>();
+
+            if (storageType != StorageType.Local)
+            {
+                return;
+            }
 
             var directory = new DirectoryInfo(@$"{_path}\{restorePointName}{Id}");
 

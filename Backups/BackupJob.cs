@@ -39,14 +39,7 @@ namespace Backups
         public RestorePoint AddRestorePoint(
             IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, List<string> files, string restorePointName, string backupPlace)
         {
-            var directory = new DirectoryInfo(backupPlace);
-
-            if (!directory.Exists)
-            {
-                directory.Create();
-            }
-
-            var restorePoint = new RestorePoint(restorePointName, backupPlace);
+            var restorePoint = new RestorePoint(restorePointName, backupPlace, storageType);
             RestorePoints.Add(restorePoint);
             StorageSaver(virtualSaver, localLocalSaver, storageType, files, restorePointName, backupPlace, restorePoint);
             return restorePoint;
