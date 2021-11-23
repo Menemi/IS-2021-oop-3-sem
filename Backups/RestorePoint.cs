@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Backups
 {
@@ -8,14 +9,15 @@ namespace Backups
 
         private static string _path;
 
-        private int _id;
+        private List<Repository> _repositories;
 
         public RestorePoint(string restorePointName, string backupPlace)
         {
-            _id = _idCounter++;
+            Id = _idCounter++;
             _path = backupPlace;
+            _repositories = new List<Repository>();
 
-            var directory = new DirectoryInfo(@$"{_path}\{restorePointName}{_id}");
+            var directory = new DirectoryInfo(@$"{_path}\{restorePointName}{Id}");
 
             if (!directory.Exists)
             {
@@ -23,14 +25,18 @@ namespace Backups
             }
         }
 
-        public RestorePoint()
+        public int Id { get; }
+
+        public List<Repository> GetRepositories()
         {
-            _id = _idCounter++;
+            return _repositories;
         }
 
-        public int GetId()
+        public Repository AddRepository()
         {
-            return _id;
+            var repository = new Repository();
+            _repositories.Add(repository);
+            return repository;
         }
     }
 }

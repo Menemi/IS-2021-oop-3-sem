@@ -1,133 +1,73 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using Backups.Exceptions;
+using Backups.Interfaces;
 
 namespace Backups
 {
-    public class BackupJob : IStorageType, IRestorePointSaver
+    public class BackupJob
     {
         private static int _idCounter = 1;
 
-        private StorageType _storageType;
-
-        private List<RestorePoint> _restorePoints;
-
         private int _id;
 
-        public BackupJob(StorageType storageType)
+        public BackupJob()
         {
             _id = _idCounter++;
-            _storageType = storageType;
-            _restorePoints = new List<RestorePoint>();
+            RestorePoints = new List<RestorePoint>();
         }
+
+        private List<RestorePoint> RestorePoints { get; }
 
         public List<RestorePoint> GetRestorePoints()
         {
-            return _restorePoints;
+            return RestorePoints;
         }
 
-        public RestorePoint AddRestorePoint(string restorePointName, string backupPlace)
+        public void AddJobObject(string filePath)
+        {
+            var sr = new StreamWriter(filePath);
+            sr.Close();
+        }
+
+        public void DeleteJobObject(string filePath)
+        {
+            var file = new FileInfo(filePath);
+            file.Delete();
+        }
+
+        public RestorePoint AddRestorePoint(
+            IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, string restorePointName, string backupPlace)
         {
             var directory = new DirectoryInfo(backupPlace);
-            var directory2 = new DirectoryInfo(@$"{backupPlace}\Job Objects");
 
             if (!directory.Exists)
             {
                 directory.Create();
             }
 
-            if (!directory2.Exists)
-            {
-                directory2.Create();
-            }
-
             var restorePoint = new RestorePoint(restorePointName, backupPlace);
-            _restorePoints.Add(restorePoint);
-
-            StorageSaver(_storageType, restorePointName, backupPlace, restorePoint.GetId());
+            RestorePoints.Add(restorePoint);
+            StorageSaver(virtualSaver, localLocalSaver, storageType, restorePointName, backupPlace, restorePoint);
             return restorePoint;
         }
 
-        public List<List<MyFile>> AddVirtualRestorePoint(List<MyFile> files)
-        {
-            var restorePoint = new RestorePoint();
-            _restorePoints.Add(restorePoint);
-            return StorageSaver(_storageType, files);
-        }
-
-        public void StorageSaver(StorageType storageType, string restorePointName, string backupPlace, int id)
+        private void StorageSaver(IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, string restorePointName, string backupPlace, RestorePoint restorePoint)
         {
             switch (storageType)
             {
-                case StorageType.Split:
-                    Split(restorePointName, backupPlace, id);
+                case StorageType.Local:
+                    localLocalSaver.Save(restorePointName, backupPlace, restorePoint.Id);
                     break;
-                case StorageType.Single:
-                    Single(restorePointName, backupPlace, id);
+                case StorageType.Virtual:
+                    var directory = new DirectoryInfo($@"{backupPlace}/Job Objects");
+                    var files = directory.GetFiles().ToList();
+                    virtualSaver.Save(files, restorePoint);
                     break;
                 default:
                     throw new WrongStorageTypeException();
             }
-        }
-
-        public List<List<MyFile>> StorageSaver(StorageType storageType, List<MyFile> files)
-        {
-            switch (storageType)
-            {
-                case StorageType.Split:
-                    return VirtualSplit(files);
-                case StorageType.Single:
-                    return VirtualSingle(files);
-                default:
-                    throw new WrongStorageTypeException();
-            }
-        }
-
-        private void Single(string restorePointName, string backupPlace, int id)
-        {
-            var jobObjectsDirectory = new DirectoryInfo(@$"{backupPlace}\Job Objects");
-            if (jobObjectsDirectory.GetFiles().Length == 0)
-            {
-                return;
-            }
-
-            var restorePointDirectory = restorePointName + id;
-            var archiveName = "Files_" + id;
-            var startPath = @$"{backupPlace}\Job Objects";
-            var zipPath =
-                @$"{backupPlace}\{restorePointDirectory}\{archiveName}.zip";
-            ZipFile.CreateFromDirectory(startPath, zipPath);
-        }
-
-        private List<List<MyFile>> VirtualSingle(List<MyFile> files)
-        {
-            var backupFiles = new List<List<MyFile>> { files };
-            return backupFiles;
-        }
-
-        private void Split(string restorePointName, string backupPlace, int id)
-        {
-            var restorePointDirectory = restorePointName + id;
-            var jobObjectsDirectory = new DirectoryInfo(@$"{backupPlace}\Job Objects");
-
-            foreach (var file in jobObjectsDirectory.GetFiles())
-            {
-                var archiveName =
-                    Path.GetFileNameWithoutExtension(@$"{backupPlace}/Job Objects/{file.Name}") + "_" + id;
-
-                var pathFileToAdd = @$"{backupPlace}\Job Objects\{file.Name}";
-                var zipPath = @$"{backupPlace}\{restorePointDirectory}\{archiveName}.zip";
-
-                using var zipArchive = ZipFile.Open(zipPath, ZipArchiveMode.Create);
-                zipArchive.CreateEntryFromFile(pathFileToAdd, file.Name);
-            }
-        }
-
-        private List<List<MyFile>> VirtualSplit(List<MyFile> files)
-        {
-            return files.Select(file => new List<MyFile> { file }).ToList();
         }
     }
 }

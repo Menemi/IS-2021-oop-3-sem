@@ -2,7 +2,7 @@
 {
     public enum StorageType
     {
-        Single = 0,
-        Split,
+        Local,
+        Virtual,
     }
 }

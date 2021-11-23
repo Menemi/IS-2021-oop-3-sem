@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Backups.Interfaces;
 using NUnit.Framework;
 
 namespace Backups.Tests
@@ -7,77 +10,51 @@ namespace Backups.Tests
     public class Tests
     {
         private static readonly string _path = @"D:\ITMOre than a university\1Menemi1\Backups\BackupDirectory";
-        private BackupJob _splitBackupJob;
-        private BackupJob _singleBackupJob;
+        private BackupJob _backupJob;
+        private ILocalSaver _splitLocalSaver;
+        private ILocalSaver _singleLocalSaver;
+        private IVirtualSaver _splitSaver;
+        private IVirtualSaver _singleSaver;
 
         [SetUp]
         public void Setup()
         {
-            _splitBackupJob = new BackupJob(StorageType.Split);
-            _singleBackupJob = new BackupJob(StorageType.Single);
-        }
-
-        // Local test with real files
-
-        // [Test]
-        // public void Test()
-        // {
-        //     _splitBackupJob.AddRestorePoint("RestorePoint", _path);
-        //     _singleBackupJob.AddRestorePoint("RestorePoint", _path);
-        //     var file = new FileInfo(@$"{_path}\Job Objects\name1.txt");
-        //     file.Delete();
-        //     _splitBackupJob.AddRestorePoint("RestorePoint", _path);
-        //     _singleBackupJob.AddRestorePoint("RestorePoint", _path);
-        // }
-
-        // Tests for git action with virtual files
-
-        [Test]
-        public void SingleStorageTest()
-        {
-            var firstFile = new MyFile("name1", DateTime.Now);
-            var secondFile = new MyFile("name2", DateTime.Now);
-            var thirdFile = new MyFile("name3", DateTime.Now);
-
-            var filesForBackup = new List<MyFile>
-            {
-                firstFile,
-                secondFile,
-                thirdFile
-            };
-
-            var startResultFiles = _singleBackupJob.AddVirtualRestorePoint(filesForBackup);
-            var startResultFilesCount = startResultFiles[0].Count;
-            filesForBackup.Remove(firstFile);
-            var resultFiles = _singleBackupJob.AddVirtualRestorePoint(filesForBackup);
-            var resultFilesCount = resultFiles[0].Count;
-
-            Assert.True(_singleBackupJob.GetRestorePoints().Count == 2);
-            Assert.True(startResultFilesCount == 3);
-            Assert.True(resultFilesCount == 2);
+            _backupJob = new BackupJob();
+            _splitLocalSaver = new SplitLocal();
+            _singleLocalSaver = new SingleLocal();
+            _splitSaver = new SplitStorage();
+            _singleSaver = new SingleStorage();
         }
 
         [Test]
-        public void SplitStorageTest()
+        public void VirtualStorageTest()
         {
-            var firstFile = new MyFile("name1", DateTime.Now);
-            var secondFile = new MyFile("name2", DateTime.Now);
-            var thirdFile = new MyFile("name3", DateTime.Now);
+            var file1 = @$"{_path}/Job Objects/name1.txt";
+            var file2 = @$"{_path}/Job Objects/name2.txt";
+            var file3 = @$"{_path}/Job Objects/name3.txt";
 
-            var filesForBackup = new List<MyFile>
+            var files = new List<string>
             {
-                firstFile,
-                secondFile,
-                thirdFile
+                file1,
+                file2,
+                file3
             };
 
-            var startResultFilesCount = _splitBackupJob.AddVirtualRestorePoint(filesForBackup).Count;
-            filesForBackup.Remove(firstFile);
-            var resultFilesCount = _splitBackupJob.AddVirtualRestorePoint(filesForBackup).Count;
+            foreach (var file in files)
+            {
+                _backupJob.AddJobObject(file);
+            }
 
-            Assert.True(_splitBackupJob.GetRestorePoints().Count == 2);
-            Assert.True(startResultFilesCount == 3);
-            Assert.True(resultFilesCount == 2);
+            var restorePoint1 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
+            var restorePoint2 = _backupJob.AddRestorePoint(_singleSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
+            _backupJob.DeleteJobObject(file1);
+            var restorePoint3 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
+            var restorePoint4 = _backupJob.AddRestorePoint(_singleSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
+
+            Assert.True(restorePoint1.GetRepositories().Count == 3);
+            Assert.True(restorePoint2.GetRepositories().Count == 1);
+            Assert.True(restorePoint3.GetRepositories().Count == 2);
+            Assert.True(restorePoint4.GetRepositories().Count == 1);
         }
     }
 }
