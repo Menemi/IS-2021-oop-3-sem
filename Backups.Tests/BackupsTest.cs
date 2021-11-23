@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Backups.Interfaces;
 using NUnit.Framework;
 
@@ -45,11 +42,12 @@ namespace Backups.Tests
                 _backupJob.AddJobObject(file);
             }
 
-            var restorePoint1 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
-            var restorePoint2 = _backupJob.AddRestorePoint(_singleSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
+            var restorePoint1 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
+            var restorePoint2 = _backupJob.AddRestorePoint(_singleSaver, _singleLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
             _backupJob.DeleteJobObject(file1);
-            var restorePoint3 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
-            var restorePoint4 = _backupJob.AddRestorePoint(_singleSaver, _splitLocalSaver, StorageType.Virtual, "RestorePoint", _path);
+            files.Remove(file1);
+            var restorePoint3 = _backupJob.AddRestorePoint(_splitSaver, _splitLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
+            var restorePoint4 = _backupJob.AddRestorePoint(_singleSaver, _singleLocalSaver, StorageType.Virtual, files,"RestorePoint", _path);
 
             Assert.True(restorePoint1.GetRepositories().Count == 3);
             Assert.True(restorePoint2.GetRepositories().Count == 1);

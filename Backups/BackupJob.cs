@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Backups.Exceptions;
 using Backups.Interfaces;
 
@@ -38,7 +37,7 @@ namespace Backups
         }
 
         public RestorePoint AddRestorePoint(
-            IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, string restorePointName, string backupPlace)
+            IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, List<string> files, string restorePointName, string backupPlace)
         {
             var directory = new DirectoryInfo(backupPlace);
 
@@ -49,11 +48,11 @@ namespace Backups
 
             var restorePoint = new RestorePoint(restorePointName, backupPlace);
             RestorePoints.Add(restorePoint);
-            StorageSaver(virtualSaver, localLocalSaver, storageType, restorePointName, backupPlace, restorePoint);
+            StorageSaver(virtualSaver, localLocalSaver, storageType, files, restorePointName, backupPlace, restorePoint);
             return restorePoint;
         }
 
-        private void StorageSaver(IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, string restorePointName, string backupPlace, RestorePoint restorePoint)
+        private void StorageSaver(IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, List<string> files, string restorePointName, string backupPlace, RestorePoint restorePoint)
         {
             switch (storageType)
             {
@@ -61,8 +60,6 @@ namespace Backups
                     localLocalSaver.Save(restorePointName, backupPlace, restorePoint.Id);
                     break;
                 case StorageType.Virtual:
-                    var directory = new DirectoryInfo($@"{backupPlace}/Job Objects");
-                    var files = directory.GetFiles().ToList();
                     virtualSaver.Save(files, restorePoint);
                     break;
                 default:
