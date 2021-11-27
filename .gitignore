@@ -361,6 +361,3 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 .idea/.idea.OopLabs/.idea/codestream.xml
-Backups/Backups.csproj
-Backups/Exceptions/BackupsException.cs
-Backups/Exceptions/WrongStorageTypeException.cs
