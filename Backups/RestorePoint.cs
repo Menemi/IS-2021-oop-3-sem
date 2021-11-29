@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using Backups.Exceptions;
+using System.Collections.ObjectModel;
 
 namespace Backups
 {
@@ -21,9 +20,9 @@ namespace Backups
 
         public string Path { get; }
 
-        public List<Repository> GetRepositories()
+        public ReadOnlyCollection<Repository> GetRepositories()
         {
-            return repositories;
+            return repositories.AsReadOnly();
         }
 
         public void AddRepository(Repository repository)
