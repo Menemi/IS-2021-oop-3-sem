@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Net;
 using Backups.Exceptions;
 using Backups.Interfaces;
 
@@ -7,57 +9,61 @@ namespace Backups
 {
     public class BackupJob
     {
-        private static int _idCounter = 1;
+        private List<RestorePoint> _restorePoints;
 
-        private int _id;
+        private List<FileInfo> _jobObjects;
 
-        public BackupJob()
+        private IStorageSaver _storageSaver;
+
+        private FileSystem _fileSystem;
+
+        public BackupJob(IStorageSaver storageSaver, FileSystem fileSystem)
         {
-            _id = _idCounter++;
-            RestorePoints = new List<RestorePoint>();
+            _restorePoints = new List<RestorePoint>();
+            _jobObjects = new List<FileInfo>();
+            _storageSaver = storageSaver ?? throw new BackupsException("StorageSaver can't be null");
+            _fileSystem = fileSystem ?? throw new BackupsException("FileSystem can't be null");
         }
 
-        private List<RestorePoint> RestorePoints { get; }
-
-        public List<RestorePoint> GetRestorePoints()
+        public ReadOnlyCollection<RestorePoint> GetRestorePoints()
         {
-            return RestorePoints;
+            return _restorePoints.AsReadOnly();
         }
 
-        public void AddJobObject(string filePath)
-        {
-            var sr = new StreamWriter(filePath);
-            sr.Close();
-        }
-
-        public void DeleteJobObject(string filePath)
+        public FileInfo AddJobObject(string filePath)
         {
             var file = new FileInfo(filePath);
-            file.Delete();
-        }
 
-        public RestorePoint AddRestorePoint(
-            IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, List<string> files, string restorePointName, string backupPlace)
-        {
-            var restorePoint = new RestorePoint(restorePointName, backupPlace, storageType);
-            RestorePoints.Add(restorePoint);
-            StorageSaver(virtualSaver, localLocalSaver, storageType, files, restorePointName, backupPlace, restorePoint);
-            return restorePoint;
-        }
-
-        private void StorageSaver(IVirtualSaver virtualSaver, ILocalSaver localLocalSaver, StorageType storageType, List<string> files, string restorePointName, string backupPlace, RestorePoint restorePoint)
-        {
-            switch (storageType)
+            if (!file.Exists)
             {
-                case StorageType.Local:
-                    localLocalSaver.Save(restorePointName, backupPlace, restorePoint.Id);
-                    break;
-                case StorageType.Virtual:
-                    virtualSaver.Save(files, restorePoint);
-                    break;
-                default:
-                    throw new WrongStorageTypeException();
+                throw new BackupsException("File doesn't exist");
             }
+
+            _jobObjects.Add(file);
+            var sr = new StreamReader(filePath);
+            sr.Close();
+            return file;
+        }
+
+        public void DeleteJobObject(FileInfo file)
+        {
+            if (!file.Exists)
+            {
+                throw new BackupsException("File doesn't exist");
+            }
+
+            _jobObjects.Remove(file);
+        }
+
+        // backupPlace - путь до директории, внутри которой будет условная директория "RestorePointN"
+        // restorePointName - название директории, то есть как раз-таки условное "RestorePoint"
+        public RestorePoint CreateRestorePoint(IBackupSaver backupSaver, string restorePointPath, string restorePointName)
+        {
+            var fullRestorePointPath = Path.Combine(restorePointPath, restorePointName);
+            var restorePoint = new RestorePoint(fullRestorePointPath);
+            _restorePoints.Add(restorePoint);
+            _storageSaver.SaveStorage(backupSaver, _fileSystem, _jobObjects, restorePoint);
+            return restorePoint;
         }
     }
 }

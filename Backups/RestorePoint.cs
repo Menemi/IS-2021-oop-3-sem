@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Backups.Exceptions;
 
 namespace Backups
 {
@@ -7,41 +8,27 @@ namespace Backups
     {
         private static int _idCounter = 1;
 
-        private static string _path;
+        private List<Repository> repositories;
 
-        private List<Repository> _repositories;
-
-        public RestorePoint(string restorePointName, string backupPlace, StorageType storageType)
+        public RestorePoint(string backupPlace)
         {
             Id = _idCounter++;
-            _path = backupPlace;
-            _repositories = new List<Repository>();
-
-            if (storageType != StorageType.Local)
-            {
-                return;
-            }
-
-            var directory = new DirectoryInfo(@$"{_path}\{restorePointName}{Id}");
-
-            if (!directory.Exists)
-            {
-                directory.Create();
-            }
+            Path = backupPlace;
+            repositories = new List<Repository>();
         }
 
         public int Id { get; }
 
+        public string Path { get; }
+
         public List<Repository> GetRepositories()
         {
-            return _repositories;
+            return repositories;
         }
 
-        public Repository AddRepository()
+        public void AddRepository(Repository repository)
         {
-            var repository = new Repository();
-            _repositories.Add(repository);
-            return repository;
+            repositories.Add(repository);
         }
     }
 }
