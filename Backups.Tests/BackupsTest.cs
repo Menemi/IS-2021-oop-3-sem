@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Backups.Interfaces;
+﻿using Backups.Interfaces;
 using NUnit.Framework;
 
 namespace Backups.Tests
