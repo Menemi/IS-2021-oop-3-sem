@@ -17,12 +17,16 @@ namespace Backups.Tests
             var splitBackupJob = new BackupJob(_splitSaver, _fileSystem);
             var singleBackupJob = new BackupJob(_singleSaver, _fileSystem);
 
-            var file11 = splitBackupJob.AddJobObject(@"C:\Users\danil\Desktop\name1.txt");
-            var file12 = splitBackupJob.AddJobObject(@"C:\Users\danil\Desktop\name2.txt");
-            var file13 = splitBackupJob.AddJobObject(@"C:\Users\danil\Desktop\name3.txt");
-            var file21 = singleBackupJob.AddJobObject(@"C:\Users\danil\Desktop\name1.txt");
-            var file22 = singleBackupJob.AddJobObject(@"C:\Users\danil\Desktop\name2.txt");
-            var file23 = singleBackupJob.AddJobObject(@"C:\Users\danil\Desktop\name3.txt");
+            const string filePath1 = @"C:\Users\danil\Desktop\name1.txt";
+            const string filePath2 = @"C:\Users\danil\Desktop\name2.txt";
+            const string filePath3 = @"C:\Users\danil\Desktop\name3.txt";
+
+            var file11 = splitBackupJob.AddJobObject(filePath1);
+            var file12 = splitBackupJob.AddJobObject(filePath2);
+            var file13 = splitBackupJob.AddJobObject(filePath3);
+            var file21 = singleBackupJob.AddJobObject(filePath1);
+            var file22 = singleBackupJob.AddJobObject(filePath2);
+            var file23 = singleBackupJob.AddJobObject(filePath3);
 
             var restorePoint1 = singleBackupJob.CreateRestorePoint(_virtualSaver, _generalPath, "SingleRestorePoint");
             var restorePoint2 = splitBackupJob.CreateRestorePoint(_virtualSaver, _generalPath, "SplitRestorePoint");
