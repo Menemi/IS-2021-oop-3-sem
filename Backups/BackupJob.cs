@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using Backups.Exceptions;
 using Backups.Interfaces;
 
@@ -32,26 +33,26 @@ namespace Backups
         public FileInfo AddJobObject(string filePath)
         {
             var file = new FileInfo(filePath);
-
-            if (!file.Exists)
-            {
-                throw new BackupsException("File doesn't exist");
-            }
-
             _jobObjects.Add(file);
-            var sr = new StreamReader(filePath);
-            sr.Close();
+
             return file;
         }
 
         public void DeleteJobObject(FileInfo file)
         {
+            _jobObjects.Remove(file);
+        }
+
+        public void FileExsistingCheck(string filePath)
+        {
+            var file = new FileInfo(filePath);
             if (!file.Exists)
             {
                 throw new BackupsException("File doesn't exist");
             }
 
-            _jobObjects.Remove(file);
+            var sr = new StreamReader(filePath);
+            sr.Close();
         }
 
         // backupPlace - путь до директории, внутри которой будет условная директория "RestorePointN"
