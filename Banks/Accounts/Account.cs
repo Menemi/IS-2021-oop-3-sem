@@ -38,5 +38,10 @@ namespace Banks.AccountTypes
         {
             Balance -= amount;
         }
+
+        public void NewTransaction(Transaction transaction)
+        {
+            _transactionHistory.Add(transaction);
+        }
     }
 }

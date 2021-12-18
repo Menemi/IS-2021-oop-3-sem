@@ -5,6 +5,8 @@ namespace Banks.AccountTypes
 {
     public class CreditAccount : AccountBuilder
     {
+        private int _transactionIdCounter = 1;
+
         public override void SetPercent(float percent)
         {
         }
@@ -31,6 +33,7 @@ namespace Banks.AccountTypes
         public override void SetCreditLimit(float creditLimit)
         {
             Account.CreditLimit = creditLimit;
+            Account.IncreaseMoney(creditLimit);
         }
 
         public override void SetCommission(float commission)
@@ -44,42 +47,26 @@ namespace Banks.AccountTypes
 
         public void Replenishment(float amount)
         {
-            Account.IncreaseMoney(amount);
+            var transaction = new TransactionReplenishment(null, Account, amount, _transactionIdCounter++);
+            Account.NewTransaction(transaction);
         }
 
         public void Withdraw(float amount)
         {
-            if (Account.MaxWithdraw != -1 && amount > Account.MaxWithdraw)
-            {
-                throw new BanksException(
-                    $"Your profile is doubtful you can't withdraw more than {Account.MaxWithdraw}");
-            }
-
-            if (Account.Balance + Account.CreditLimit < amount)
-            {
-                throw new BanksException(
-                    $"You have not enough money (balance: {Account.Balance}; credit limit:{Account.CreditLimit})");
-            }
-
-            Account.ReduceMoney(amount);
+            var transaction = new TransactionWithdraw(null, Account, amount, _transactionIdCounter++);
+            Account.NewTransaction(transaction);
         }
 
         public void Remittance(Account account, float amount)
         {
-            if (Account.MaxRemittance != -1 && amount > Account.MaxRemittance)
-            {
-                throw new BanksException(
-                    $"Your profile is doubtful you can't transfer more than {Account.MaxRemittance}");
-            }
+            var transaction = new TransactionRemittance(null, Account, amount, _transactionIdCounter++);
+            Account.NewTransaction(transaction);
+        }
 
-            if (Account.Balance + Account.CreditLimit < amount)
-            {
-                throw new BanksException(
-                    $"You have not enough money (balance: {Account.Balance}; credit limit:{Account.CreditLimit})");
-            }
-
-            Account.ReduceMoney(amount);
-            account.IncreaseMoney(amount);
+        public void Cancellation(Transaction oldTransaction)
+        {
+            var transaction = new TransactionCancellation(oldTransaction);
+            Account.NewTransaction(transaction);
         }
     }
 }

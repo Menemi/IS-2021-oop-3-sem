@@ -5,6 +5,8 @@ namespace Banks.AccountTypes
 {
     public class DepositAccount : AccountBuilder
     {
+        private int _transactionIdCounter = 1;
+
         public override void SetPercent(float percent)
         {
         }
@@ -44,7 +46,8 @@ namespace Banks.AccountTypes
 
         public void Replenishment(float amount)
         {
-            Account.IncreaseMoney(amount);
+            var transaction = new TransactionReplenishment(null, Account, amount, _transactionIdCounter++);
+            Account.NewTransaction(transaction);
         }
 
         public void Withdraw(float amount)
@@ -55,21 +58,11 @@ namespace Banks.AccountTypes
                     $"Unblocking period ({Account.AccountUnblockingPeriod}) did bot come, you can't withdraw any money");
             }
 
-            if (Account.MaxWithdraw != -1 && amount > Account.MaxWithdraw)
-            {
-                throw new BanksException(
-                    $"Your profile is doubtful you can't withdraw more than {Account.MaxWithdraw}");
-            }
-
-            if (Account.Balance < amount)
-            {
-                throw new BanksException($"You have not enough money ({Account.Balance})");
-            }
-
-            Account.ReduceMoney(amount);
+            var transaction = new TransactionWithdraw(null, Account, amount, _transactionIdCounter++);
+            Account.NewTransaction(transaction);
         }
 
-        public void Remittance(Account account, float amount)
+        public void Remittance(Account recipient, float amount)
         {
             if (Account.AccountUnblockingPeriod < DateTime.Now)
             {
@@ -77,19 +70,14 @@ namespace Banks.AccountTypes
                     $"Unblocking period ({Account.AccountUnblockingPeriod}) did bot come, you can't transfer any money");
             }
 
-            if (Account.MaxRemittance != -1 && amount > Account.MaxRemittance)
-            {
-                throw new BanksException(
-                    $"Your profile is doubtful you can't transfer more than {Account.MaxRemittance}");
-            }
+            var transaction = new TransactionRemittance(Account, recipient, amount, _transactionIdCounter++);
+            Account.NewTransaction(transaction);
+        }
 
-            if (Account.Balance < amount)
-            {
-                throw new BanksException($"You have not enough money ({Account.Balance})");
-            }
-
-            Account.ReduceMoney(amount);
-            account.IncreaseMoney(amount);
+        public void Cancellation(Transaction oldTransaction)
+        {
+            var transaction = new TransactionCancellation(oldTransaction);
+            Account.NewTransaction(transaction);
         }
     }
 }
