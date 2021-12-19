@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Banks.AccountTypes;
 
 namespace Banks
@@ -27,6 +28,11 @@ namespace Banks
         public void AddNewAccount(Account account)
         {
             _accountsList.Add(account);
+        }
+
+        public ReadOnlyCollection<Account> GetAccounts()
+        {
+            return _accountsList.AsReadOnly();
         }
     }
 }
