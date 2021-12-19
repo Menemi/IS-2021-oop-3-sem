@@ -5,8 +5,6 @@ namespace Banks.AccountTypes
 {
     public class DebitAccount : AccountBuilder
     {
-        private int _transactionIdCounter = 1;
-
         public override void SetPercent(float percent)
         {
             Account.Percent = percent;
@@ -41,30 +39,6 @@ namespace Banks.AccountTypes
 
         public override void SetAccountUnblockingPeriod(DateTime date)
         {
-        }
-
-        public void Replenishment(float amount)
-        {
-            var transaction = new TransactionReplenishment(null, Account, amount, _transactionIdCounter++);
-            Account.NewTransaction(transaction);
-        }
-
-        public void Withdraw(float amount)
-        {
-            var transaction = new TransactionWithdraw(null, Account, amount, _transactionIdCounter++);
-            Account.NewTransaction(transaction);
-        }
-
-        public void Remittance(Account recipient, float amount)
-        {
-            var transaction = new TransactionRemittance(Account, recipient, amount, _transactionIdCounter++);
-            Account.NewTransaction(transaction);
-        }
-
-        public void Cancellation(Transaction oldTransaction)
-        {
-            var transaction = new TransactionCancellation(oldTransaction);
-            Account.NewTransaction(transaction);
         }
     }
 }
