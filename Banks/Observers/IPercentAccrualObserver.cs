@@ -2,7 +2,7 @@
 
 namespace Banks.Observers
 {
-    public interface IObserver
+    public interface IPercentAccrualObserver
     {
         void Update(DateTime date);
     }
