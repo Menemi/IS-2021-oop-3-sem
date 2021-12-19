@@ -1,4 +1,5 @@
 ﻿using Banks.AccountTypes;
+using Banks.Exceptions;
 
 namespace Banks
 {
@@ -7,6 +8,11 @@ namespace Banks
         public TransactionCancellation(Transaction transaction)
             : base(transaction.Id, transaction.Sender, transaction.Recipient, transaction.TransactionAmount)
         {
+            if (transaction.IsCanceled())
+            {
+                throw new BanksException("This transaction has already been canceled");
+            }
+
             if (transaction.Sender != null)
             {
                 transaction.Recipient.ReduceMoney(transaction.TransactionAmount);
@@ -22,6 +28,8 @@ namespace Banks
             {
                 transaction.Recipient.ReduceMoney(transaction.TransactionAmount);
             }
+
+            transaction.Cancle();
         }
     }
 }
