@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using Banks.Exceptions;
+using Banks.Observers;
 
 namespace Banks
 {
-    public class CentralBank
+    public class CentralBank : IObservable
     {
         private static int _idCounter = 1;
 
-        private List<Bank> _banks;
+        private List<IObserver> _banks;
 
-        // Регистрацией всех банков, а также взаимодействием между банками занимается центральный банк. Он должен
-        // управлять банками (предоставлять возможность создать банк) и предоставлять необходимый функционал, чтобы
-        // банки могли взаимодействовать с другими банками (например, можно реализовать переводы между банками через
-        // него). Он также занимается уведомлением других банков о том, что нужно начислять остаток или комиссию - для
-        // этого механизма не требуется создавать таймеры и завязываться на реальное время.
         public CentralBank(string cBankName)
         {
             Id = _idCounter++;
             Name = cBankName;
-            _banks = new List<Bank>();
+            _banks = new List<IObserver>();
         }
 
         public int Id { get; }
@@ -44,8 +41,36 @@ namespace Banks
                 creditLimit,
                 comission,
                 accountUnblockingPeriod);
-            _banks.Add(bank);
+            RegisterObserver(bank);
             return bank;
+        }
+
+        public void RegisterObserver(IObserver bank)
+        {
+            if (!_banks.Contains(bank))
+            {
+                throw new BanksException("Account has already been removed to observers");
+            }
+
+            _banks.Add(bank);
+        }
+
+        public void RemoveObserver(IObserver bank)
+        {
+            if (!_banks.Contains(bank))
+            {
+                throw new BanksException("Account has already been removed to observers");
+            }
+
+            _banks.Remove(bank);
+        }
+
+        public void NotifyObservers(DateTime date)
+        {
+            foreach (var observer in _banks)
+            {
+                observer.Update(date);
+            }
         }
     }
 }

@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Banks.AccountTypes;
 using Banks.Exceptions;
+using Banks.Observers;
 
 namespace Banks
 {
-    public class Bank
+    public class Bank : IObservable, IObserver
     {
         private static int _bankIdCounter = 1;
 
         private static long _accountIdCounter = 1234567800000000;
 
         private List<Account> _clientsAccounts;
+
+        private List<IObserver> _clientsAccountObservers;
 
         private List<PercentOfTheAmount> _percentsOfTheAmount;
 
@@ -48,13 +51,14 @@ namespace Banks
             _creditLimit = creditLimit;
             _comission = comission;
             _accountUnblockingPeriod = accountUnblockingPeriod;
+            _clientsAccountObservers = new List<IObserver>();
         }
 
         public int Id { get; }
 
         public string Name { get; }
 
-        public Account CreateAccount(AccountBuilder accountBuilder, Client client, float startBalance)
+        public Account CreateAccount(AccountBuilder accountBuilder, Person person, float startBalance)
         {
             accountBuilder.CreateNewAccount(_accountIdCounter++);
             accountBuilder.SetPercent(_fixedPercent);
@@ -67,9 +71,103 @@ namespace Banks
             accountBuilder.SetAccountUnblockingPeriod(_accountUnblockingPeriod);
 
             _clientsAccounts.Add(accountBuilder.Account);
-            client.AddNewAccount(accountBuilder.Account);
+            person.AddNewAccount(accountBuilder.Account);
 
             return accountBuilder.Account;
+        }
+
+        public void Replenishment(Account account, float amount)
+        {
+            var transaction = new TransactionReplenishment(null, account, amount, account.TransactionIdCounter++);
+            account.NewTransaction(transaction);
+
+            if (account.AccountUnblockingPeriod != DateTime.MinValue)
+            {
+                UpdateDepositPercent(account.Balance);
+            }
+        }
+
+        public void Withdraw(Account account, float amount)
+        {
+            if (account.AccountUnblockingPeriod > DateTime.Now)
+            {
+                throw new BanksException(
+                    $"Unblocking period ({account.AccountUnblockingPeriod}) did not come, you can't withdraw any money");
+            }
+
+            var transaction = new TransactionWithdraw(null, account, amount, account.TransactionIdCounter++);
+            account.NewTransaction(transaction);
+
+            if (account.AccountUnblockingPeriod != DateTime.MinValue)
+            {
+                UpdateDepositPercent(account.Balance);
+            }
+        }
+
+        public void Remittance(Account sender, Account recipient, float amount)
+        {
+            if (sender.AccountUnblockingPeriod > DateTime.Now)
+            {
+                throw new BanksException(
+                    $"Unblocking period ({sender.AccountUnblockingPeriod}) did not come, you can't transfer any money");
+            }
+
+            var transaction = new TransactionRemittance(sender, recipient, amount, sender.TransactionIdCounter++);
+            sender.NewTransaction(transaction);
+
+            if (sender.AccountUnblockingPeriod != DateTime.MinValue)
+            {
+                UpdateDepositPercent(sender.Balance);
+            }
+
+            if (recipient.AccountUnblockingPeriod != DateTime.MinValue)
+            {
+                UpdateDepositPercent(recipient.Balance);
+            }
+        }
+
+        public void Cancellation(Account account, Transaction oldTransaction)
+        {
+            var transaction = new TransactionCancellation(oldTransaction);
+            account.NewTransaction(transaction);
+
+            if (account.AccountUnblockingPeriod != DateTime.MinValue)
+            {
+                UpdateDepositPercent(account.Balance);
+            }
+        }
+
+        public void Update(DateTime date)
+        {
+            NotifyObservers(date);
+        }
+
+        public void RegisterObserver(IObserver account)
+        {
+            if (_clientsAccountObservers.Contains(account))
+            {
+                throw new BanksException("Account has already been added to observers");
+            }
+
+            _clientsAccountObservers.Add(account);
+        }
+
+        public void RemoveObserver(IObserver account)
+        {
+            if (!_clientsAccountObservers.Contains(account))
+            {
+                throw new BanksException("Account has already been removed to observers");
+            }
+
+            _clientsAccountObservers.Remove(account);
+        }
+
+        public void NotifyObservers(DateTime date)
+        {
+            foreach (var observer in _clientsAccountObservers)
+            {
+                observer.Update(date);
+            }
         }
 
         private float UpdateDepositPercent(float balance)
@@ -82,53 +180,5 @@ namespace Banks
 
             throw new BanksException("Bank error, try again later");
         }
-
-        // public void AddNewDepositPercents(float lowerBound, float upperBound, float percent)
-        // {
-        //     var newPercent = new PercentOfTheAmount(lowerBound, upperBound, percent);
-        //     _percentsOfTheAmount.Add(newPercent);
-        // }
-
-        // public IAccount CreateCreditAccount(Client client)
-        // {
-        //     IAccount creditAccount = new CreditAccount(_accountIdCounter++);
-        //     if (client.Doubtful)
-        //     {
-        //         creditAccount.SetMaxRemittance(_maxRemittanceAmount);
-        //         creditAccount.SetMaxWithdraw(_maxWithdrawAmount);
-        //     }
-        //
-        //     _clientsAccounts.Add(creditAccount);
-        //     client.AddNewAccount(creditAccount);
-        //     return creditAccount;
-        // }
-        //
-        // public IAccount CreateDebitAccount(Client client, float startBalance)
-        // {
-        //     IAccount debitAccount = new DebitAccount(_accountIdCounter++);
-        //     if (client.Doubtful)
-        //     {
-        //         debitAccount.SetMaxRemittance(_maxRemittanceAmount);
-        //         debitAccount.SetMaxWithdraw(_maxWithdrawAmount);
-        //     }
-        //
-        //     _clientsAccounts.Add(debitAccount);
-        //     client.AddNewAccount(debitAccount);
-        //     return debitAccount;
-        // }
-        //
-        // public IAccount CreateDepositAccount(Client client, float startBalance)
-        // {
-        //     IAccount depositAccount = new DepositAccount(_accountIdCounter++, startBalance);
-        //     if (client.Doubtful)
-        //     {
-        //         depositAccount.SetMaxRemittance(_maxRemittanceAmount);
-        //         depositAccount.SetMaxWithdraw(_maxWithdrawAmount);
-        //     }
-        //
-        //     _clientsAccounts.Add(depositAccount);
-        //     client.AddNewAccount(depositAccount);
-        //     return depositAccount;
-        // }
     }
 }
