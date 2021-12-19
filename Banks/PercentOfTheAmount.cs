@@ -2,17 +2,17 @@
 {
     public class PercentOfTheAmount
     {
-        public PercentOfTheAmount(float lowerBound, float upperBound, float percent)
+        public PercentOfTheAmount(double lowerBound, double upperBound, double percent)
         {
             LowerBound = lowerBound;
             UpperBound = upperBound;
             Percent = percent;
         }
 
-        public float LowerBound { get; }
+        public double LowerBound { get; }
 
-        public float UpperBound { get; }
+        public double UpperBound { get; }
 
-        public float Percent { get; }
+        public double Percent { get; }
     }
 }

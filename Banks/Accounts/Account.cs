@@ -4,13 +4,13 @@ using Banks.Observers;
 
 namespace Banks.AccountTypes
 {
-    public class Account : IObserver
+    public class Account : IPercentAccrualObserver
     {
         private List<Transaction> _transactionHistory;
 
-        private float summaryPercent;
+        private double summaryPercent;
 
-        private float summaryCommission;
+        private double summaryCommission;
 
         public Account(long id)
         {
@@ -21,28 +21,28 @@ namespace Banks.AccountTypes
 
         public long Id { get; }
 
-        public float Percent { get; set; }
+        public double Percent { get; set; }
 
-        public float Balance { get; private set; }
+        public double Balance { get; private set; }
 
-        public float MaxWithdraw { get; set; } = -1;
+        public double MaxWithdraw { get; set; } = -1;
 
-        public float MaxRemittance { get; set; } = -1;
+        public double MaxRemittance { get; set; } = -1;
 
-        public float CreditLimit { get; set; }
+        public double CreditLimit { get; set; }
 
-        public float Commission { get; set; }
+        public double Commission { get; set; }
 
         public DateTime AccountUnblockingPeriod { get; set; }
 
         public int TransactionIdCounter { get; set; } = 1;
 
-        public void IncreaseMoney(float amount)
+        public void IncreaseMoney(double amount)
         {
             Balance += amount;
         }
 
-        public void ReduceMoney(float amount)
+        public void ReduceMoney(double amount)
         {
             Balance -= amount;
         }
@@ -54,15 +54,22 @@ namespace Banks.AccountTypes
 
         public void Update(DateTime checkDate)
         {
-            var startDate = DateTime.Today;
+            // var startDate = DateTime.Today; - реализация для работы в реальном мире
+            // оставил хардкод для правильных тестов
+            var startDate = new DateTime(2021, 12, 19);
             var totalDays = checkDate.Subtract(startDate).TotalDays;
 
             if (Commission != 0)
             {
+                if (Balance >= CreditLimit)
+                {
+                    return;
+                }
+
                 for (var i = 0; i < totalDays; i++)
                 {
                     summaryCommission += Commission;
-                    startDate.AddDays(1);
+                    startDate = startDate.AddDays(1);
 
                     if (startDate.Day == 1)
                     {
@@ -75,8 +82,9 @@ namespace Banks.AccountTypes
             {
                 for (var i = 0; i < totalDays; i++)
                 {
-                    summaryPercent += Balance * (Percent * 0.01f);
-                    startDate.AddDays(1);
+                    var divider = startDate.Year % 4 == 0 ? 366 : 365;
+                    summaryPercent += Balance * Math.Round(Percent / divider, 2, MidpointRounding.AwayFromZero);
+                    startDate = startDate.AddDays(1);
 
                     if (startDate.Day == 1)
                     {

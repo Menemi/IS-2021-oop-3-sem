@@ -6,7 +6,7 @@ namespace Banks
 {
     public class TransactionWithdraw : Transaction
     {
-        public TransactionWithdraw(Account sender, Account recipient, float transactionAmount, int id)
+        public TransactionWithdraw(Account sender, Account recipient, double transactionAmount, int id)
             : base(id, sender, recipient, -transactionAmount)
         {
             if (recipient.MaxWithdraw != -1 && transactionAmount > recipient.MaxWithdraw)

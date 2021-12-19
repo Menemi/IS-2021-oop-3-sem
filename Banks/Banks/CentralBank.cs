@@ -5,17 +5,17 @@ using Banks.Observers;
 
 namespace Banks
 {
-    public class CentralBank : IObservable
+    public class CentralBank : IPercentAccrualObservable
     {
         private static int _idCounter = 1;
 
-        private List<IObserver> _banks;
+        private List<IPercentAccrualObserver> _banks;
 
         public CentralBank(string cBankName)
         {
             Id = _idCounter++;
             Name = cBankName;
-            _banks = new List<IObserver>();
+            _banks = new List<IPercentAccrualObserver>();
         }
 
         public int Id { get; }
@@ -25,11 +25,11 @@ namespace Banks
         public Bank CreateBank(
             string bankName,
             List<PercentOfTheAmount> percentsOfTheAmount,
-            float fixedPercent,
-            float maxWithdrawAmount,
-            float maxRemittanceAmount,
-            float creditLimit,
-            float comission,
+            double fixedPercent,
+            double maxWithdrawAmount,
+            double maxRemittanceAmount,
+            double creditLimit,
+            double comission,
             DateTime accountUnblockingPeriod)
         {
             var bank = new Bank(
@@ -45,9 +45,9 @@ namespace Banks
             return bank;
         }
 
-        public void RegisterObserver(IObserver bank)
+        public void RegisterObserver(IPercentAccrualObserver bank)
         {
-            if (!_banks.Contains(bank))
+            if (_banks.Contains(bank))
             {
                 throw new BanksException("Account has already been removed to observers");
             }
@@ -55,7 +55,7 @@ namespace Banks
             _banks.Add(bank);
         }
 
-        public void RemoveObserver(IObserver bank)
+        public void RemoveObserver(IPercentAccrualObserver bank)
         {
             if (!_banks.Contains(bank))
             {

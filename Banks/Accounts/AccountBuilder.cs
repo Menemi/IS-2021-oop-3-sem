@@ -11,19 +11,19 @@ namespace Banks.AccountTypes
             Account = new Account(id);
         }
 
-        public abstract void SetPercent(float percent);
+        public abstract void SetPercent(double percent);
 
-        public abstract void SetDepositPercent(float percent);
+        public abstract void SetDepositPercent(double percent);
 
-        public abstract void SetStartBalance(float startBalance);
+        public abstract void SetStartBalance(double startBalance);
 
-        public abstract void SetMaxWithdraw(float amount);
+        public abstract void SetMaxWithdraw(double amount);
 
-        public abstract void SetMaxRemittance(float amount);
+        public abstract void SetMaxRemittance(double amount);
 
-        public abstract void SetCreditLimit(float creditLimit);
+        public abstract void SetCreditLimit(double creditLimit);
 
-        public abstract void SetCommission(float commission);
+        public abstract void SetCommission(double commission);
 
         public abstract void SetAccountUnblockingPeriod(DateTime date);
     }

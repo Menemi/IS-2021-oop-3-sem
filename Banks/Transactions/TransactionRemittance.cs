@@ -6,7 +6,7 @@ namespace Banks
 {
     public class TransactionRemittance : Transaction
     {
-        public TransactionRemittance(Account sender, Account recipient, float transactionAmount, int id)
+        public TransactionRemittance(Account sender, Account recipient, double transactionAmount, int id)
             : base(id, sender, recipient, transactionAmount)
         {
             if (sender.MaxRemittance != -1 && transactionAmount > sender.MaxRemittance)

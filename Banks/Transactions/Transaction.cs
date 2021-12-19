@@ -5,9 +5,9 @@ namespace Banks
 {
     public abstract class Transaction
     {
-        public bool _statusCanceled;
+        private bool _statusCanceled;
 
-        public Transaction(int id, Account sender, Account recipient, float amount)
+        public Transaction(int id, Account sender, Account recipient, double amount)
         {
             Id = id;
             TransactionAmount = amount;
@@ -19,7 +19,7 @@ namespace Banks
 
         public int Id { get; }
 
-        public float TransactionAmount { get; }
+        public double TransactionAmount { get; }
 
         public Account Sender { get; }
 
