@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Banks.AccountTypes;
+using Banks.Observers;
 
 namespace Banks
 {
@@ -31,11 +33,6 @@ namespace Banks
             {
                 Person.Doubtful = false;
             }
-        }
-
-        public void AddNewAccount(Account account)
-        {
-            Person.AddNewAccount(account);
         }
     }
 }
