@@ -4,11 +4,12 @@ namespace Banks
 {
     public abstract class ClientBuilder
     {
-        public Client Client { get; private set; }
+        public Person Person { get; private set; }
 
-        public void CreateNewClient(string name, string surname)
+        public Person CreateNewClient(string name, string surname)
         {
-            Client = new Client(name, surname);
+            Person = new Person(name, surname);
+            return Person;
         }
 
         public abstract void SetName(string name);
