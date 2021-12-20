@@ -20,7 +20,7 @@ namespace Banks
                 return;
             }
 
-            if (transaction.TransactionAmount < 0)
+            if (transaction.TransactionAmount > 0)
             {
                 transaction.Recipient.IncreaseMoney(transaction.TransactionAmount);
             }
