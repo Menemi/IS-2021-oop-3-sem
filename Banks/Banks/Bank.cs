@@ -1,22 +1,24 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Banks.AccountTypes;
+using Banks.BankMessages;
 using Banks.Exceptions;
 using Banks.Observers;
 
 namespace Banks
 {
-    public class Bank : IPercentAccrualObservable, IPercentAccrualObserver
+    public class Bank : IChangesNotifyObservable
     {
         private static int _bankIdCounter = 1;
 
         private static long _accountIdCounter = 1234567800000000;
 
-        private List<IPercentAccrualObserver> _clientsAccounts;
+        private List<Account> _clientsAccounts;
 
-        private List<IPercentAccrualObserver> _clientsAccountObservers;
+        private Dictionary<Account, IChangesNotifyObserver> _clientsAccountObservers;
 
         private List<PercentOfTheAmount> _percentsOfTheAmount;
 
@@ -28,7 +30,7 @@ namespace Banks
 
         private double _creditLimit;
 
-        private double _comission;
+        private double _commission;
 
         private DateTime _accountUnblockingPeriod;
 
@@ -39,34 +41,34 @@ namespace Banks
             double maxWithdrawAmount,
             double maxRemittanceAmount,
             double creditLimit,
-            double comission,
+            double commission,
             DateTime accountUnblockingPeriod)
         {
             Id = _bankIdCounter++;
             Name = bankName;
             _percentsOfTheAmount = percentsOfTheAmount;
-            _clientsAccounts = new List<IPercentAccrualObserver>();
+            _clientsAccountObservers = new Dictionary<Account, IChangesNotifyObserver>();
+            _clientsAccounts = new List<Account>();
             _fixedPercent = fixedPercent;
             _maxWithdrawAmount = maxWithdrawAmount;
             _maxRemittanceAmount = maxRemittanceAmount;
             _creditLimit = creditLimit;
-            _comission = comission;
+            _commission = commission;
             _accountUnblockingPeriod = accountUnblockingPeriod;
-            _clientsAccountObservers = new List<IPercentAccrualObserver>();
         }
 
         public int Id { get; }
 
         public string Name { get; }
 
-        public ReadOnlyCollection<IPercentAccrualObserver> GetClientsAccountObservers()
-        {
-            return _clientsAccountObservers.AsReadOnly();
-        }
-
-        public ReadOnlyCollection<IPercentAccrualObserver> GetClientsAccounts()
+        public ReadOnlyCollection<Account> GetClientsAccounts()
         {
             return _clientsAccounts.AsReadOnly();
+        }
+
+        public Dictionary<Account, IChangesNotifyObserver> GetNotifiedAccounts()
+        {
+            return _clientsAccountObservers;
         }
 
         public Account CreateAccount(AccountBuilder accountBuilder, Person person, double startBalance)
@@ -78,13 +80,70 @@ namespace Banks
             accountBuilder.SetMaxWithdraw(_maxWithdrawAmount);
             accountBuilder.SetMaxRemittance(_maxRemittanceAmount);
             accountBuilder.SetCreditLimit(_creditLimit);
-            accountBuilder.SetCommission(_comission);
+            accountBuilder.SetCommission(_commission);
             accountBuilder.SetAccountUnblockingPeriod(_accountUnblockingPeriod);
 
             _clientsAccounts.Add(accountBuilder.Account);
             person.AddNewAccount(accountBuilder.Account);
 
             return accountBuilder.Account;
+        }
+
+        public void SetCreditLimit(double amount)
+        {
+            var oldCreditLimit = _creditLimit;
+            _creditLimit = amount;
+            var observersList = new Dictionary<Account, IChangesNotifyObserver>();
+            foreach (var account in _clientsAccounts.Where(account => account.CreditLimit != 0))
+            {
+                account.ReduceMoney(oldCreditLimit);
+                account.IncreaseMoney(_creditLimit);
+                account.CreditLimit = _creditLimit;
+            }
+
+            foreach (var observer in _clientsAccountObservers)
+            {
+                if (observer.Key.CreditLimit != 0)
+                {
+                    observersList.Add(observer.Key, observer.Value);
+                }
+            }
+
+            IBankMessage message = new CreditLimitChangeMsg();
+            NotifyObservers(observersList, _creditLimit, message);
+        }
+
+        public void SetFixedPercent(double amount)
+        {
+            _fixedPercent = amount;
+            var observersList = new Dictionary<Account, IChangesNotifyObserver>();
+            foreach (var account in _clientsAccounts.Where(account => account.Percent != 0))
+            {
+                account.Percent = _fixedPercent;
+            }
+
+            foreach (var observer in _clientsAccountObservers)
+            {
+                if (observer.Key.Percent != 0)
+                {
+                    observersList.Add(observer.Key, observer.Value);
+                }
+            }
+
+            IBankMessage message = new CreditLimitChangeMsg();
+            NotifyObservers(observersList, _fixedPercent, message);
+        }
+
+        public void SetMaxRemittanceAmount(double amount)
+        {
+            _maxRemittanceAmount = amount;
+            IBankMessage message = new CreditLimitChangeMsg();
+            foreach (var account in _clientsAccounts)
+            {
+                account.MaxRemittance = _maxRemittanceAmount;
+            }
+
+            NotifyObservers(_clientsAccountObservers, _maxRemittanceAmount, message);
         }
 
         public void Replenishment(Account account, double amount)
@@ -148,36 +207,42 @@ namespace Banks
             }
         }
 
-        public void Update(DateTime date)
-        {
-            NotifyObservers(date);
-        }
-
-        public void RegisterObserver(IPercentAccrualObserver account)
-        {
-            if (_clientsAccountObservers.Contains(account))
-            {
-                throw new BanksException("Account has already been added to observers");
-            }
-
-            _clientsAccountObservers.Add(account);
-        }
-
-        public void RemoveObserver(IPercentAccrualObserver account)
-        {
-            if (!_clientsAccountObservers.Contains(account))
-            {
-                throw new BanksException("Account has already been removed to observers");
-            }
-
-            _clientsAccountObservers.Remove(account);
-        }
-
-        public void NotifyObservers(DateTime date)
+        public void BalanceUpdate(DateTime date)
         {
             foreach (var observer in _clientsAccounts)
             {
-                observer.Update(date);
+                observer.AnyBalanceTimeChange(date);
+            }
+        }
+
+        public void RegisterObserver(Account account, IChangesNotifyObserver accountsObserver)
+        {
+            if (_clientsAccountObservers.Any(accountObserver =>
+                accountObserver.Value == accountsObserver))
+            {
+                throw new BanksException("Account has already been added to notified accounts list");
+            }
+
+            _clientsAccountObservers.Add(account, accountsObserver);
+        }
+
+        public void RemoveObserver(Account account, IChangesNotifyObserver accountsObserver)
+        {
+            if (_clientsAccountObservers.Any(accountObserver =>
+                accountObserver.Value == accountsObserver))
+            {
+                _clientsAccountObservers.Remove(account);
+                return;
+            }
+
+            throw new BanksException("Account has already been added to notified accounts list");
+        }
+
+        public void NotifyObservers(Dictionary<Account, IChangesNotifyObserver> observers, double amount, IBankMessage message)
+        {
+            foreach (var observer in observers)
+            {
+                observer.Value.Update(message.MessageToClient(observer.Key, amount));
             }
         }
 

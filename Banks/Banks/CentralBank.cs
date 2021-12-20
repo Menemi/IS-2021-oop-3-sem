@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Banks.AccountTypes;
 using Banks.Exceptions;
 using Banks.Observers;
 
 namespace Banks
 {
-    public class CentralBank : IPercentAccrualObservable
+    public class CentralBank
     {
         private static int _idCounter = 1;
 
-        private List<IPercentAccrualObserver> _banks;
+        private List<Bank> _banks;
 
         public CentralBank(string cBankName)
         {
             Id = _idCounter++;
             Name = cBankName;
-            _banks = new List<IPercentAccrualObserver>();
+            _banks = new List<Bank>();
         }
 
         public int Id { get; }
@@ -29,7 +31,7 @@ namespace Banks
             double maxWithdrawAmount,
             double maxRemittanceAmount,
             double creditLimit,
-            double comission,
+            double commission,
             DateTime accountUnblockingPeriod)
         {
             var bank = new Bank(
@@ -39,37 +41,22 @@ namespace Banks
                 maxWithdrawAmount,
                 maxRemittanceAmount,
                 creditLimit,
-                comission,
+                commission,
                 accountUnblockingPeriod);
-            RegisterObserver(bank);
+            _banks.Add(bank);
             return bank;
         }
 
-        public void RegisterObserver(IPercentAccrualObserver bank)
+        public ReadOnlyCollection<Bank> GetBanks()
         {
-            if (_banks.Contains(bank))
-            {
-                throw new BanksException("Account has already been removed to observers");
-            }
-
-            _banks.Add(bank);
-        }
-
-        public void RemoveObserver(IPercentAccrualObserver bank)
-        {
-            if (!_banks.Contains(bank))
-            {
-                throw new BanksException("Account has already been removed to observers");
-            }
-
-            _banks.Remove(bank);
+            return _banks.AsReadOnly();
         }
 
         public void NotifyObservers(DateTime date)
         {
-            foreach (var observer in _banks)
+            foreach (var bank in _banks)
             {
-                observer.Update(date);
+                bank.BalanceUpdate(date);
             }
         }
     }

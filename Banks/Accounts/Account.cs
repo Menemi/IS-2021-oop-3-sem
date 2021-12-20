@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Banks.BankMessages;
 using Banks.Observers;
 
 namespace Banks.AccountTypes
 {
-    public class Account : IPercentAccrualObserver
+    public class Account : IChangesNotifyObserver
     {
         private List<Transaction> _transactionHistory;
-
-        private double summaryPercent;
-
-        private double summaryCommission;
 
         public Account(long id)
         {
             Id = id;
             _transactionHistory = new List<Transaction>();
-            summaryPercent = summaryCommission = 0;
+            SummaryPercent = SummaryCommission = 0;
+            BankMessageList = new List<string>();
         }
 
         public long Id { get; }
@@ -37,6 +36,17 @@ namespace Banks.AccountTypes
 
         public int TransactionIdCounter { get; set; } = 1;
 
+        public double SummaryPercent { get; set; }
+
+        public double SummaryCommission { get; set; }
+
+        public List<string> BankMessageList { get; }
+
+        public ReadOnlyCollection<Transaction> GetTransactions()
+        {
+            return _transactionHistory.AsReadOnly();
+        }
+
         public void IncreaseMoney(double amount)
         {
             Balance += amount;
@@ -52,7 +62,7 @@ namespace Banks.AccountTypes
             _transactionHistory.Add(transaction);
         }
 
-        public void Update(DateTime checkDate)
+        public void AnyBalanceTimeChange(DateTime checkDate)
         {
             // var startDate = DateTime.Today; - реализация для работы в реальном мире
             // оставил хардкод для правильных тестов
@@ -68,13 +78,13 @@ namespace Banks.AccountTypes
 
                 for (var i = 0; i < totalDays; i++)
                 {
-                    summaryCommission += Commission;
+                    SummaryCommission += Commission;
                     startDate = startDate.AddDays(1);
 
                     if (startDate.Day == 1)
                     {
-                        ReduceMoney(summaryCommission);
-                        summaryCommission = 0;
+                        ReduceMoney(SummaryCommission);
+                        SummaryCommission = 0;
                     }
                 }
             }
@@ -83,16 +93,21 @@ namespace Banks.AccountTypes
                 for (var i = 0; i < totalDays; i++)
                 {
                     var divider = startDate.Year % 4 == 0 ? 366 : 365;
-                    summaryPercent += Balance * Math.Round(Percent / divider, 2, MidpointRounding.AwayFromZero);
+                    SummaryPercent += Balance * Math.Round(Percent / divider, 2, MidpointRounding.AwayFromZero);
                     startDate = startDate.AddDays(1);
 
                     if (startDate.Day == 1)
                     {
-                        IncreaseMoney(summaryPercent);
-                        summaryPercent = 0;
+                        IncreaseMoney(SummaryPercent);
+                        SummaryPercent = 0;
                     }
                 }
             }
+        }
+
+        public void Update(string message)
+        {
+            BankMessageList.Add(message);
         }
     }
 }
