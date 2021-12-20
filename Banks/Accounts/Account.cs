@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Banks.BankMessages;
+using System.Globalization;
 using Banks.Observers;
 
 namespace Banks.AccountTypes
@@ -41,6 +41,11 @@ namespace Banks.AccountTypes
         public double SummaryCommission { get; set; }
 
         public List<string> BankMessageList { get; }
+
+        public static AccountBuilder CreateBuilder(long id)
+        {
+            return new AccountBuilder(id);
+        }
 
         public ReadOnlyCollection<Transaction> GetTransactions()
         {
@@ -92,7 +97,7 @@ namespace Banks.AccountTypes
             {
                 for (var i = 0; i < totalDays; i++)
                 {
-                    var divider = startDate.Year % 4 == 0 ? 366 : 365;
+                    var divider = new GregorianCalendar().GetDaysInYear(startDate.Year);
                     SummaryPercent += Balance * Math.Round(Percent / divider, 2, MidpointRounding.AwayFromZero);
                     startDate = startDate.AddDays(1);
 
