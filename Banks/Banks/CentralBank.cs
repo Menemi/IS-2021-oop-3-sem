@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Banks.AccountTypes;
-using Banks.Exceptions;
-using Banks.Observers;
 
 namespace Banks
 {
     public class CentralBank
     {
-        private static int _idCounter = 1;
+        private static CentralBank instance;
 
         private List<Bank> _banks;
 
-        public CentralBank(string cBankName)
+        protected CentralBank(string cBankName)
         {
-            Id = _idCounter++;
             Name = cBankName;
             _banks = new List<Bank>();
         }
 
-        public int Id { get; }
-
         public string Name { get; }
+
+        public static CentralBank GetInstance(string name)
+        {
+            return instance ?? (instance = new CentralBank(name));
+        }
 
         public Bank CreateBank(
             string bankName,
