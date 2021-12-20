@@ -2,29 +2,72 @@
 
 namespace Banks.AccountTypes
 {
-    public abstract class AccountBuilder
+    public class AccountBuilder
     {
-        public Account Account { get; private set; }
+        private Account _account;
 
-        public void CreateNewAccount(long id)
+        public AccountBuilder(long id)
         {
-            Account = new Account(id);
+            _account = new Account(id);
         }
 
-        public abstract void SetPercent(double percent);
+        public static implicit operator Account(AccountBuilder builder)
+        {
+            return builder._account;
+        }
 
-        public abstract void SetDepositPercent(double percent);
+        public AccountBuilder SetPercent(double percent)
+        {
+            _account.Percent = percent;
+            return this;
+        }
 
-        public abstract void SetStartBalance(double startBalance);
+        public AccountBuilder SetDepositPercent(double percent)
+        {
+            _account.Percent = percent;
+            return this;
+        }
 
-        public abstract void SetMaxWithdraw(double amount);
+        public AccountBuilder SetStartBalance(double startBalance)
+        {
+            _account.IncreaseMoney(startBalance);
+            return this;
+        }
 
-        public abstract void SetMaxRemittance(double amount);
+        public AccountBuilder SetMaxWithdraw(double amount)
+        {
+            _account.MaxWithdraw = amount;
+            return this;
+        }
 
-        public abstract void SetCreditLimit(double creditLimit);
+        public AccountBuilder SetMaxRemittance(double amount)
+        {
+            _account.MaxRemittance = amount;
+            return this;
+        }
 
-        public abstract void SetCommission(double commission);
+        public AccountBuilder SetCreditLimit(double creditLimit)
+        {
+            _account.CreditLimit = creditLimit;
+            _account.IncreaseMoney(creditLimit);
+            return this;
+        }
 
-        public abstract void SetAccountUnblockingPeriod(DateTime date);
+        public AccountBuilder SetCommission(double commission)
+        {
+            _account.Commission = commission;
+            return this;
+        }
+
+        public AccountBuilder SetAccountUnblockingPeriod(DateTime date)
+        {
+            _account.AccountUnblockingPeriod = date;
+            return this;
+        }
+
+        public Account Build()
+        {
+            return _account;
+        }
     }
 }

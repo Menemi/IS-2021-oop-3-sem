@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Banks.AccountTypes;
 
 namespace Banks
 {
@@ -12,7 +10,7 @@ namespace Banks
         {
             string chooseTypeOfUser;
             var timeMachine = new TimeMachine();
-            var centralBank = new CentralBank("Central Bank");
+            var centralBank = CentralBank.GetInstance("Central Bank");
             var people = new List<Person>();
 
             // краткий гайд по работе с тестами: когда предлагаются на выбор функции, всегда можно писать либо номер
@@ -207,21 +205,15 @@ namespace Banks
                                         var accountType = Console.ReadLine();
                                         if (accountType == "credit")
                                         {
-                                            AccountBuilder accountBuilder = new CreditAccount();
-                                            var newCredit = bank.CreateAccount(
-                                                accountBuilder, person, Convert.ToDouble(Console.ReadLine()));
+                                            bank.CreateCreditAccount(person, Convert.ToDouble(Console.ReadLine()));
                                         }
                                         else if (accountType == "debit")
                                         {
-                                            AccountBuilder accountBuilder = new DebitAccount();
-                                            var newDebit = bank.CreateAccount(
-                                                accountBuilder, person, Convert.ToDouble(Console.ReadLine()));
+                                            bank.CreateDebitAccount(person, Convert.ToDouble(Console.ReadLine()));
                                         }
                                         else if (accountType == "deposit")
                                         {
-                                            AccountBuilder accountBuilder = new DepositAccount();
-                                            var newDeposit = bank.CreateAccount(
-                                                accountBuilder, person, Convert.ToDouble(Console.ReadLine()));
+                                            bank.CreateDepositAccount(person, Convert.ToDouble(Console.ReadLine()));
                                         }
                                     }
 

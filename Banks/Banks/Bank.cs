@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -71,22 +70,52 @@ namespace Banks
             return _clientsAccountObservers;
         }
 
-        public Account CreateAccount(AccountBuilder accountBuilder, Person person, double startBalance)
+        public Account CreateCreditAccount(Person person, double startBalance)
         {
-            accountBuilder.CreateNewAccount(_accountIdCounter++);
-            accountBuilder.SetPercent(_fixedPercent);
-            accountBuilder.SetDepositPercent(UpdateDepositPercent(startBalance));
-            accountBuilder.SetStartBalance(startBalance);
-            accountBuilder.SetMaxWithdraw(_maxWithdrawAmount);
-            accountBuilder.SetMaxRemittance(_maxRemittanceAmount);
-            accountBuilder.SetCreditLimit(_creditLimit);
-            accountBuilder.SetCommission(_commission);
-            accountBuilder.SetAccountUnblockingPeriod(_accountUnblockingPeriod);
+            var account = Account.CreateBuilder(_accountIdCounter++)
+                .SetStartBalance(startBalance)
+                .SetMaxWithdraw(_maxWithdrawAmount)
+                .SetMaxRemittance(_maxRemittanceAmount)
+                .SetCreditLimit(_creditLimit)
+                .SetCommission(_commission)
+                .Build();
 
-            _clientsAccounts.Add(accountBuilder.Account);
-            person.AddNewAccount(accountBuilder.Account);
+            _clientsAccounts.Add(account);
+            person.AddNewAccount(account);
 
-            return accountBuilder.Account;
+            return account;
+        }
+
+        public Account CreateDebitAccount(Person person, double startBalance)
+        {
+            var account = Account.CreateBuilder(_accountIdCounter++)
+                .SetPercent(_fixedPercent)
+                .SetStartBalance(startBalance)
+                .SetMaxWithdraw(_maxWithdrawAmount)
+                .SetMaxRemittance(_maxRemittanceAmount)
+                .Build();
+
+            _clientsAccounts.Add(account);
+            person.AddNewAccount(account);
+
+            return account;
+        }
+
+        public Account CreateDepositAccount(Person person, double startBalance)
+        {
+            var account = Account.CreateBuilder(_accountIdCounter++)
+                .SetPercent(_fixedPercent)
+                .SetDepositPercent(UpdateDepositPercent(startBalance))
+                .SetStartBalance(startBalance)
+                .SetMaxWithdraw(_maxWithdrawAmount)
+                .SetMaxRemittance(_maxRemittanceAmount)
+                .SetAccountUnblockingPeriod(_accountUnblockingPeriod)
+                .Build();
+
+            _clientsAccounts.Add(account);
+            person.AddNewAccount(account);
+
+            return account;
         }
 
         public void SetCreditLimit(double amount)

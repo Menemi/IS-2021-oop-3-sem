@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Banks.AccountTypes;
 using Banks.Exceptions;
 using NUnit.Framework;
 
@@ -15,7 +13,7 @@ namespace Banks.Tests
         [SetUp]
         public void Setup()
         {
-            _centralBank = new CentralBank("Central Bank");
+            _centralBank = CentralBank.GetInstance("Central Bank");
             _timeMachine = new TimeMachine();
         }
 
@@ -38,8 +36,7 @@ namespace Banks.Tests
                 10000,
                 1000,
                 new DateTime(2022, 1, 1));
-
-            AccountBuilder accountBuilder = new DebitAccount();
+            
             ClientBuilder clientBuilder = new Client();
 
             var putin = clientBuilder.CreateNewClient("Vladimir", "Putin");
@@ -49,8 +46,8 @@ namespace Banks.Tests
             var biden = clientBuilder.CreateNewClient("Joe", "Biden");
             clientBuilder.SetPassport(new Passport(6666, 666666));
 
-            var putinDebit = tinkoff.CreateAccount(accountBuilder, putin, 100000);
-            var bidenDebit = tinkoff.CreateAccount(accountBuilder, biden, 200000);
+            var putinDebit = tinkoff.CreateDebitAccount(putin, 100000);
+            var bidenDebit = tinkoff.CreateDebitAccount(biden, 200000);
 
             tinkoff.Remittance(bidenDebit, putinDebit, 100, "лови сотку, задолжал же тебе...");
             Assert.AreEqual(putinDebit.Balance, 100100);
@@ -77,8 +74,7 @@ namespace Banks.Tests
                 10000,
                 1000,
                 new DateTime(2022, 1, 1));
-
-            AccountBuilder accountBuilder = new DebitAccount();
+            
             ClientBuilder clientBuilder = new Client();
 
             var putin = clientBuilder.CreateNewClient("Vladimir", "Putin");
@@ -88,15 +84,11 @@ namespace Banks.Tests
             var biden = clientBuilder.CreateNewClient("Joe", "Biden");
             clientBuilder.SetPassport(new Passport(6666, 666666));
 
-            var putinDebit = tinkoff.CreateAccount(accountBuilder, putin, 100000);
-            var bidenDebit = tinkoff.CreateAccount(accountBuilder, biden, 200000);
-
-            accountBuilder = new CreditAccount();
-            var putinCredit = tinkoff.CreateAccount(accountBuilder, putin, 100000);
-
-            accountBuilder = new DepositAccount();
-            var putinDeposit = tinkoff.CreateAccount(accountBuilder, putin, 100000);
-            var bidenDeposit = tinkoff.CreateAccount(accountBuilder, biden, 10000);
+            var putinDebit = tinkoff.CreateDebitAccount(putin, 100000);
+            var bidenDebit = tinkoff.CreateDebitAccount(biden, 200000);
+            var putinCredit = tinkoff.CreateCreditAccount(putin, 100000);
+            var putinDeposit = tinkoff.CreateDepositAccount(putin, 100000);
+            var bidenDeposit = tinkoff.CreateDepositAccount(biden, 10000);
 
             var dateToRewind = new DateTime(2022, 1, 1);
             _timeMachine.TimeRewind(_centralBank, dateToRewind);
@@ -129,7 +121,6 @@ namespace Banks.Tests
                 1000,
                 new DateTime(2022, 1, 1));
 
-            AccountBuilder accountBuilder = new DebitAccount();
             ClientBuilder clientBuilder = new Client();
 
             var putin = clientBuilder.CreateNewClient("Vladimir", "Putin");
@@ -139,15 +130,11 @@ namespace Banks.Tests
             var biden = clientBuilder.CreateNewClient("Joe", "Biden");
             clientBuilder.SetPassport(new Passport(6666, 666666));
 
-            var putinDebit = tinkoff.CreateAccount(accountBuilder, putin, 100000);
-            var bidenDebit = tinkoff.CreateAccount(accountBuilder, biden, 200000);
-
-            accountBuilder = new CreditAccount();
-            var putinCredit = tinkoff.CreateAccount(accountBuilder, putin, 100000);
-
-            accountBuilder = new DepositAccount();
-            var putinDeposit = tinkoff.CreateAccount(accountBuilder, putin, 100000);
-            var bidenDeposit = tinkoff.CreateAccount(accountBuilder, biden, 10000);
+            var putinDebit = tinkoff.CreateDebitAccount(putin, 100000);
+            var bidenDebit = tinkoff.CreateDebitAccount(biden, 200000);
+            var putinCredit = tinkoff.CreateCreditAccount(putin, 100000);
+            var putinDeposit = tinkoff.CreateDepositAccount(putin, 100000);
+            var bidenDeposit = tinkoff.CreateDepositAccount(biden, 10000);
 
             tinkoff.RegisterObserver(putinDebit, putinDebit);
             tinkoff.RegisterObserver(putinCredit, putinCredit);
