@@ -1,7 +1,4 @@
-﻿using System;
-using Banks.BankMessages;
-
-namespace Banks.Observers
+﻿namespace Banks.Observers
 {
     public interface IChangesNotifyObserver
     {

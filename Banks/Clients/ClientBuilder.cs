@@ -1,6 +1,4 @@
-﻿using Banks.AccountTypes;
-
-namespace Banks
+﻿namespace Banks
 {
     public abstract class ClientBuilder
     {

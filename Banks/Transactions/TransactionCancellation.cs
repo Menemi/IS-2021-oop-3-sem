@@ -1,5 +1,4 @@
-﻿using Banks.AccountTypes;
-using Banks.Exceptions;
+﻿using Banks.Exceptions;
 
 namespace Banks
 {

@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Banks.AccountTypes;
-using Banks.Observers;
-
-namespace Banks
+﻿namespace Banks
 {
     public class Client : ClientBuilder
     {
