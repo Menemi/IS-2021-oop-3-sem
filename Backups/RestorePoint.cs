@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Backups
@@ -14,11 +15,14 @@ namespace Backups
             Id = _idCounter++;
             Path = backupPlace;
             repositories = new List<Repository>();
+            CreationTime = DateTime.Now;
         }
 
         public int Id { get; }
 
         public string Path { get; }
+
+        public DateTime CreationTime { get; }
 
         public ReadOnlyCollection<Repository> GetRepositories()
         {
