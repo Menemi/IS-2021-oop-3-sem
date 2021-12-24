@@ -1,0 +1,81 @@
+﻿bank manager
+create bank
+tinkoff
+1
+0
+1000000000
+9
+3
+10000
+10000
+10000
+1000
+2024
+10
+12
+choose again
+client
+register in system
+Vladimir
+Putin
+Ilinka
+7777
+777777
+create new account
+1
+Vladimir Putin
+credit
+10000
+create new account
+1
+Vladimir Putin
+debit
+10000
+create new account
+1
+Vladimir Putin
+deposit
+10000
+accounts list
+Vladimir Putin
+balance
+Vladimir Putin
+1234567800000001
+withdraw
+Vladimir Putin
+1234567800000001
+100
+replenishment
+Vladimir Putin
+1234567800000001
+100
+remmitance
+Vladimir Putin
+1234567800000001
+1234567800000002
+100
+transaction history
+Vladimir Putin
+1234567800000001
+cancel transaction
+Vladimir Putin
+1234567800000001
+1
+choose again
+bank manager
+rewind time
+2022
+1
+1
+client
+balance
+Vladimir Putin
+1234567800000000
+balance
+Vladimir Putin
+1234567800000001
+balance
+Vladimir Putin
+1234567800000002
+choose again
+stop
