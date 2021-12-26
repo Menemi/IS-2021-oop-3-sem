@@ -18,6 +18,7 @@ namespace Backups
 
         private IStorageSaver _storageSaver;
 
+        [DataMember]
         private FileSystem _fileSystem;
 
         public BackupJob(IStorageSaver storageSaver, FileSystem fileSystem)
@@ -36,6 +37,11 @@ namespace Backups
         public ReadOnlyCollection<FileInfo> GetJobObjects()
         {
             return _jobObjects.AsReadOnly();
+        }
+
+        public FileSystem GetFileSystem()
+        {
+            return _fileSystem;
         }
 
         public FileInfo AddJobObject(string filePath)
