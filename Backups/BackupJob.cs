@@ -2,13 +2,16 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using Backups.Exceptions;
 using Backups.Interfaces;
 
 namespace Backups
 {
+    [DataContract]
     public class BackupJob
     {
+        [DataMember]
         private List<RestorePoint> _restorePoints;
 
         private List<FileInfo> _jobObjects;
@@ -31,8 +34,11 @@ namespace Backups
             return _restorePoints.AsReadOnly();
         }
 
+<<<<<<< HEAD
 <<<<<<< 02685f340b6d1296e5eec3155f1198c2d936c9e5
 =======
+=======
+>>>>>>> lab-5
         public ReadOnlyCollection<FileInfo> GetJobObjects()
         {
             return _jobObjects.AsReadOnly();
@@ -43,7 +49,10 @@ namespace Backups
             return _fileSystem;
         }
 
+<<<<<<< HEAD
 >>>>>>> feat: add getter of file system + add data params
+=======
+>>>>>>> lab-5
         public FileInfo AddJobObject(string filePath)
         {
             var file = new FileInfo(filePath);
