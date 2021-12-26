@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using Backups;
 using Backups.Interfaces;
-using Microsoft.Extensions.Logging;
+using BackupsExtra.Logging;
 using Single = Backups.Single;
 
 namespace BackupsExtra
@@ -19,6 +17,8 @@ namespace BackupsExtra
             const string generalPath = @"D:\ITMOre than a university\1Menemi1\BackupsExtra\BackupDirectory";
             IStorageSaver singleSaver = new Single();
             IStorageSaver splitSaver = new Split();
+            ILogging fileLogging = new FileLogging();
+            ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver localSaver = new LocalSaver();
             var fileSystem = new FileSystem(generalPath);
 
@@ -41,20 +41,20 @@ namespace BackupsExtra
                 splitBackupJob.FileExsistingCheck(filePath);
             }
 
-            var file11 = splitBackupJob.AddJobObject(filePath1);
-            var file12 = splitBackupJob.AddJobObject(filePath2);
-            var file13 = splitBackupJob.AddJobObject(filePath3);
-            var file21 = singleBackupJob.AddJobObject(filePath1);
-            var file22 = singleBackupJob.AddJobObject(filePath2);
-            var file23 = singleBackupJob.AddJobObject(filePath3);
+            var file11 = splitBackupJob.AddJobObject(fileLogging, true, filePath1);
+            var file12 = splitBackupJob.AddJobObject(fileLogging, true, filePath2);
+            var file13 = splitBackupJob.AddJobObject(fileLogging, true, filePath3);
+            var file21 = singleBackupJob.AddJobObject(fileLogging, true, filePath1);
+            var file22 = singleBackupJob.AddJobObject(fileLogging, true, filePath2);
+            var file23 = singleBackupJob.AddJobObject(fileLogging, true, filePath3);
 
-            var restorePoint = singleBackupJob.CreateRestorePoint(localSaver, generalPath, "SingleRestorePoint");
-            splitBackupJob.CreateRestorePoint(localSaver, generalPath, "SplitRestorePoint");
+            singleBackupJob.CreateRestorePoint(fileLogging, localSaver, true, generalPath, "SingleRestorePoint");
+            splitBackupJob.CreateRestorePoint(fileLogging, localSaver, true, generalPath, "SplitRestorePoint");
             splitBackupJob.FileExsistingCheck(filePath3);
-            splitBackupJob.DeleteJobObject(file13);
-            singleBackupJob.DeleteJobObject(file23);
-            singleBackupJob.CreateRestorePoint(localSaver, generalPath, "SingleRestorePoint");
-            splitBackupJob.CreateRestorePoint(localSaver, generalPath, "SplitRestorePoint");
+            splitBackupJob.DeleteJobObject(fileLogging, true, file13);
+            singleBackupJob.DeleteJobObject(fileLogging, true, file23);
+            singleBackupJob.CreateRestorePoint(fileLogging, localSaver, true, generalPath, "SingleRestorePoint");
+            splitBackupJob.CreateRestorePoint(fileLogging, localSaver, true, generalPath, "SplitRestorePoint");
 
             dataService.SaveData();
         }
