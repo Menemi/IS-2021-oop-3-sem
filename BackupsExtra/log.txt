@@ -1,0 +1,99 @@
+// удаление по числу рестор поинтов. максимальное число = 2
+2021.12.29 00:55:20: Storage 'name1.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 00:55:20: Storage 'name2.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 00:55:20: Storage 'name3.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 00:55:20: Storage 'name1.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 00:55:20: Storage 'name2.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 00:55:20: Storage 'name3.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 00:55:20: Restore point 'SingleRestorePoint1' was successfully created
+2021.12.29 00:55:20: Restore point 'SplitRestorePoint2' was successfully created
+2021.12.29 00:55:20: Storage 'name3.txt' was successfully deleted from 'Backups.Split' backup job
+2021.12.29 00:55:20: Storage 'name3.txt' was successfully deleted from 'Backups.Single' backup job
+2021.12.29 00:55:20: Restore point 'SingleRestorePoint3' was successfully created
+2021.12.29 00:55:20: Restore point 'SplitRestorePoint4' was successfully created
+2021.12.29 00:55:20: Restore point 'SingleRestorePoint5' was successfully created
+2021.12.29 00:55:20: Restore point 'SingleRestorePoint1' was successfully deleted
+2021.12.29 00:55:20: Restore point 'SplitRestorePoint6' was successfully created
+2021.12.29 00:55:20: Restore point 'SplitRestorePoint2' was successfully deleted
+
+// удаление рестор поинтов по дате. создал все рестор поинты сейчас, а дата удаления рестор поинтов стояла с 2021.12.29 и ранее
+2021.12.29 00:59:30: Storage 'name1.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 00:59:30: Storage 'name2.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 00:59:30: Storage 'name3.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 00:59:30: Storage 'name1.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 00:59:30: Storage 'name2.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 00:59:30: Storage 'name3.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 00:59:30: Restore point 'SingleRestorePoint1' was successfully created
+2021.12.29 00:59:30: Restore point 'SplitRestorePoint2' was successfully created
+2021.12.29 00:59:30: Storage 'name3.txt' was successfully deleted from 'Backups.Split' backup job
+2021.12.29 00:59:30: Storage 'name3.txt' was successfully deleted from 'Backups.Single' backup job
+2021.12.29 00:59:30: Restore point 'SingleRestorePoint3' was successfully created
+2021.12.29 00:59:30: Restore point 'SplitRestorePoint4' was successfully created
+2021.12.29 00:59:30: Restore point 'SingleRestorePoint5' was successfully created
+2021.12.29 00:59:30: Restore point 'SplitRestorePoint6' was successfully created
+
+// поменял дату, с которой можно начинать удалять рестор поинты на завтра
+2021.12.29 01:00:44: Storage 'name1.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:00:44: Storage 'name2.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:00:44: Storage 'name3.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:00:44: Storage 'name1.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:00:44: Storage 'name2.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:00:44: Storage 'name3.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:00:44: Restore point 'SingleRestorePoint1' was successfully created
+// поймал эксепшн, так как больше рестор поинтов до этого не было, а удалить все рестор поинты нельзя
+
+// отключил любое удаление рестор поинтов на время тестов других функций
+2021.12.29 01:07:31: Storage 'name1.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:07:31: Storage 'name2.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:07:31: Storage 'name3.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:07:31: Storage 'name1.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:07:31: Storage 'name2.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:07:31: Storage 'name3.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:07:31: Restore point 'SingleRestorePoint1' was successfully created
+2021.12.29 01:07:31: Restore point 'SplitRestorePoint2' was successfully created
+2021.12.29 01:07:31: Storage 'name3.txt' was successfully deleted from 'Backups.Split' backup job
+2021.12.29 01:07:31: Storage 'name3.txt' was successfully deleted from 'Backups.Single' backup job
+2021.12.29 01:07:31: Restore point 'SingleRestorePoint3' was successfully created
+2021.12.29 01:07:31: Restore point 'SplitRestorePoint4' was successfully created
+2021.12.29 01:07:31: Restore point 'SingleRestorePoint5' was successfully created
+2021.12.29 01:07:31: Restore point 'SplitRestorePoint6' was successfully created
+2021.12.29 01:07:31: Restore point 'SingleRestorePoint1' was successfully deleted
+2021.12.29 01:07:31: Merge of restore point 'SingleRestorePoint1' was successfully done into restore point 'SingleRestorePoint3'!
+2021.12.29 01:07:31: Restore point 'SingleRestorePoint3' was successfully deleted
+2021.12.29 01:07:31: Merge of restore point 'SingleRestorePoint3' was successfully done into restore point 'SplitRestorePoint2'!
+2021.12.29 01:07:31: Restore point 'SplitRestorePoint2' was successfully deleted
+2021.12.29 01:07:31: Merge of restore point 'SplitRestorePoint2' was successfully done into restore point 'SplitRestorePoint4'!
+
+// тест восстановления точки в кастомное место
+2021.12.29 01:08:44: Storage 'name1.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:08:44: Storage 'name2.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:08:44: Storage 'name3.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:08:44: Storage 'name1.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:08:44: Storage 'name2.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:08:44: Storage 'name3.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:08:44: Restore point 'SingleRestorePoint1' was successfully created
+2021.12.29 01:08:44: Restore point 'SplitRestorePoint2' was successfully created
+2021.12.29 01:08:44: Storage 'name3.txt' was successfully deleted from 'Backups.Split' backup job
+2021.12.29 01:08:44: Storage 'name3.txt' was successfully deleted from 'Backups.Single' backup job
+2021.12.29 01:08:44: Restore point 'SingleRestorePoint3' was successfully created
+2021.12.29 01:08:44: Restore point 'SplitRestorePoint4' was successfully created
+2021.12.29 01:08:44: Restore point 'SingleRestorePoint5' was successfully created
+2021.12.29 01:08:44: Restore point 'SplitRestorePoint6' was successfully created
+2021.12.29 01:08:44: Recovery of restore point 'SingleRestorePoint3' was successfully done!
+
+// тест восстановления точки в оригинальные места файлов
+2021.12.29 01:09:59: Storage 'name1.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:09:59: Storage 'name2.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:09:59: Storage 'name3.txt' was successfully created in 'Backups.Split' backup job
+2021.12.29 01:09:59: Storage 'name1.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:09:59: Storage 'name2.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:09:59: Storage 'name3.txt' was successfully created in 'Backups.Single' backup job
+2021.12.29 01:09:59: Restore point 'SingleRestorePoint1' was successfully created
+2021.12.29 01:09:59: Restore point 'SplitRestorePoint2' was successfully created
+2021.12.29 01:09:59: Storage 'name3.txt' was successfully deleted from 'Backups.Split' backup job
+2021.12.29 01:09:59: Storage 'name3.txt' was successfully deleted from 'Backups.Single' backup job
+2021.12.29 01:09:59: Restore point 'SingleRestorePoint3' was successfully created
+2021.12.29 01:09:59: Restore point 'SplitRestorePoint4' was successfully created
+2021.12.29 01:09:59: Restore point 'SingleRestorePoint5' was successfully created
+2021.12.29 01:09:59: Restore point 'SplitRestorePoint6' was successfully created
+2021.12.29 01:09:59: Recovery of restore point 'SingleRestorePoint3' was successfully done!
