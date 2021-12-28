@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Backups.Exceptions;
 
 namespace Backups
 {
@@ -32,6 +33,21 @@ namespace Backups
         public void AddRepository(Repository repository)
         {
             repositories.Add(repository);
+        }
+
+        public void RemoveRepositories(List<Repository> repository)
+        {
+            foreach (var rep in repository)
+            {
+                if (repositories.Contains(rep))
+                {
+                    repositories.Remove(rep);
+                }
+                else
+                {
+                    throw new BackupsException("You can't remove non-existent repository");
+                }
+            }
         }
     }
 }
