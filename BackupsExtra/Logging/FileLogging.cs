@@ -10,7 +10,7 @@ namespace BackupsExtra.Logging
             if (isTimecodeOn)
             {
                 using var logger = new LoggerConfiguration()
-                    .WriteTo.File(path, outputTemplate: "{Timestamp:yy.MM.dd HH:mm:ss}: {Message}{NewLine}{Exception}")
+                    .WriteTo.File(path, outputTemplate: "{Timestamp:yyyy.MM.dd HH:mm:ss}: {Message}{NewLine}{Exception}")
                     .CreateLogger();
                 logger.Information(message);
             }
