@@ -1,0 +1,48 @@
+[
+  {
+    "_restorePoints": [
+      {
+        "Id": 2,
+        "Path": "D:\\ITMOre than a university\\1Menemi1\\BackupsExtra\\BackupDirectory\\SplitRestorePoint",
+        "CreationTime": "2021-12-29T01:08:44.8301055+03:00"
+      },
+      {
+        "Id": 4,
+        "Path": "D:\\ITMOre than a university\\1Menemi1\\BackupsExtra\\BackupDirectory\\SplitRestorePoint",
+        "CreationTime": "2021-12-29T01:08:44.8419537+03:00"
+      },
+      {
+        "Id": 6,
+        "Path": "D:\\ITMOre than a university\\1Menemi1\\BackupsExtra\\BackupDirectory\\SplitRestorePoint",
+        "CreationTime": "2021-12-29T01:08:44.8480252+03:00"
+      }
+    ],
+    "JobObjectsPaths": [
+      "C:\\Users\\danil\\Desktop\\name1.txt",
+      "C:\\Users\\danil\\Desktop\\name2.txt"
+    ]
+  },
+  {
+    "_restorePoints": [
+      {
+        "Id": 1,
+        "Path": "D:\\ITMOre than a university\\1Menemi1\\BackupsExtra\\BackupDirectory\\SingleRestorePoint",
+        "CreationTime": "2021-12-29T01:08:44.8096957+03:00"
+      },
+      {
+        "Id": 3,
+        "Path": "D:\\ITMOre than a university\\1Menemi1\\BackupsExtra\\BackupDirectory\\SingleRestorePoint",
+        "CreationTime": "2021-12-29T01:08:44.8369466+03:00"
+      },
+      {
+        "Id": 5,
+        "Path": "D:\\ITMOre than a university\\1Menemi1\\BackupsExtra\\BackupDirectory\\SingleRestorePoint",
+        "CreationTime": "2021-12-29T01:08:44.8461043+03:00"
+      }
+    ],
+    "JobObjectsPaths": [
+      "C:\\Users\\danil\\Desktop\\name1.txt",
+      "C:\\Users\\danil\\Desktop\\name2.txt"
+    ]
+  }
+]
