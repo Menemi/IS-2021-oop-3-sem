@@ -35,12 +35,6 @@ namespace BackupsExtra
             _backupJobs = JsonConvert.DeserializeObject<List<ComplementedBackupJob>>(
                 File.ReadAllText("D:/ITMOre than a university/1Menemi1/BackupsExtra/data.json"));
 
-            // var obj = JsonConvert.DeserializeObject(
-            //     File.ReadAllText("D:/ITMOre than a university/1Menemi1/BackupsExtra/data.json"));
-
-            // _backupJobs.Add(obj as ComplementedBackupJob);
-
-            // _backupJobs = obj as List<ComplementedBackupJob>;
             Console.WriteLine("All is OK!");
         }
     }
