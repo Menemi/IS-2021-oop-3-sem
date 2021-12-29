@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Backups.Exceptions;
+using BackupsExtra.Logging;
 using Newtonsoft.Json;
 
 namespace BackupsExtra
@@ -10,9 +10,12 @@ namespace BackupsExtra
     {
         private List<ComplementedBackupJob> _backupJobs;
 
-        public DataService()
+        private ILogging _logger;
+
+        public DataService(ILogging logger)
         {
             _backupJobs = new List<ComplementedBackupJob>();
+            _logger = logger;
         }
 
         public void AddBackupJob(ComplementedBackupJob backupJob)
@@ -20,22 +23,21 @@ namespace BackupsExtra
             _backupJobs.Add(backupJob);
         }
 
-        public void SaveData()
+        public void SaveData(bool isTimecodeOn)
         {
-            Console.WriteLine("Serialize process is going...");
             File.WriteAllText(
                 "D:/ITMOre than a university/1Menemi1/BackupsExtra/data.json",
                 JsonConvert.SerializeObject(_backupJobs));
-            Console.WriteLine("All is OK!");
+
+            _logger.CreateLog(isTimecodeOn, "Serialize process was done successfully");
         }
 
-        public void LoadData()
+        public void LoadData(bool isTimecodeOn)
         {
-            Console.WriteLine("Deserialize process is going...");
             _backupJobs = JsonConvert.DeserializeObject<List<ComplementedBackupJob>>(
                 File.ReadAllText("D:/ITMOre than a university/1Menemi1/BackupsExtra/data.json"));
 
-            Console.WriteLine("All is OK!");
+            _logger.CreateLog(isTimecodeOn, "Deserialize process was done successfully");
         }
     }
 }
