@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Backups;
 
 namespace BackupsExtra.Recovery
@@ -14,6 +13,10 @@ namespace BackupsExtra.Recovery
                 foreach (var file in repository.GetStorageList())
                 {
                     pathsToRecovery.Add(file.Directory.ToString());
+                    if (!file.Directory.Exists)
+                    {
+                        file.Directory.Create();
+                    }
                 }
             }
 

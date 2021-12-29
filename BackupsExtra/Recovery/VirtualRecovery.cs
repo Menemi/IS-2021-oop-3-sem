@@ -8,12 +8,20 @@ namespace BackupsExtra.Recovery
     {
         public void Recovery(RestorePoint restorePoint, List<string> pathsToRecovery)
         {
+            var i = 0;
             foreach (var repository in restorePoint.GetRepositories())
             {
                 foreach (var file in repository.GetStorageList())
                 {
+                    var directoryToRecovery = new DirectoryInfo(pathsToRecovery[i]);
+                    if (!directoryToRecovery.Exists)
+                    {
+                        directoryToRecovery.Create();
+                    }
+
                     var fileInfo = new FileInfo(file.FullName);
-                    fileInfo.CopyTo(Path.Combine(pathsToRecovery[0], fileInfo.Name));
+                    fileInfo.CopyTo(Path.Combine(pathsToRecovery[i], fileInfo.Name));
+                    ++i;
                 }
             }
         }

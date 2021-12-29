@@ -19,11 +19,17 @@ namespace BackupsExtra.Recovery
                 ZipFile.ExtractToDirectory(
                     Path.Combine($"{restorePoint.Path}{restorePoint.Id}", $"Files_{zipFileCounter}.zip"),
                     tempDirectory.FullName);
-                foreach (var file in tempDirectory.GetFileSystemInfos())
+                foreach (var file in tempDirectory.GetFiles())
                 {
-                    i++;
+                    var directoryToRecovery = new DirectoryInfo(pathsToRecovery[i]);
+                    if (!directoryToRecovery.Exists)
+                    {
+                        directoryToRecovery.Create();
+                    }
+
                     var fileInfo = new FileInfo(file.FullName);
-                    fileInfo.CopyTo(Path.Combine(pathsToRecovery[0], fileInfo.Name));
+                    fileInfo.CopyTo(Path.Combine(pathsToRecovery[i], fileInfo.Name));
+                    ++i;
                 }
 
                 tempDirectory.Delete(true);
