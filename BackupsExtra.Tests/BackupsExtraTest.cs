@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Backups;
 using Backups.Interfaces;
 using BackupsExtra.Logging;
@@ -21,11 +19,8 @@ namespace BackupsExtra.Tests
             IStorageSaver singleSaver = new Single();
             IStorageSaver splitSaver = new Split();
             var fileSystem = new FileSystem(generalPath);
-            IRemoveRestorePoint dateRemove = new RemoveByDate();
-            IRemoveRestorePoint hybridRemove = new RemoveByHybrid();
             IRemoveRestorePoint numberRemove = new RemoveByNumber();
             IRestorePointRemover virtualRemove = new VirtualRemove();
-            IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
             IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
             IRecoveryProcessMethod virtualRecovery = new VirtualRecovery();
             IMergeProcessMethod virtualMerge = new VirtualMerge();
@@ -72,11 +67,9 @@ namespace BackupsExtra.Tests
             splitBackupJob.DeleteJobObject(true, file13);
             singleBackupJob.DeleteJobObject(true, file23);
             var restorePoint3 = singleBackupJob.CreateRestorePoint(virtualSaver, true, generalPath, "SingleRestorePoint");
-            var restorePoint4 = splitBackupJob.CreateRestorePoint(virtualSaver, true, generalPath, "SplitRestorePoint");
-            var restorePoint5 = singleBackupJob.CreateRestorePoint(virtualSaver, true, generalPath, "SingleRestorePoint");
-            var restorePoint6 = splitBackupJob.CreateRestorePoint(virtualSaver, true, generalPath, "SplitRestorePoint");
+            var restorePoint4 = singleBackupJob.CreateRestorePoint(virtualSaver, true, generalPath, "SingleRestorePoint");
             
-            Assert.AreEqual(splitBackupJob.GetNewRestorePoints().Count, 2);
+            Assert.AreEqual(splitBackupJob.GetNewRestorePoints().Count, 1);
             Assert.AreEqual(singleBackupJob.GetNewRestorePoints().Count, 2);
         }
 
@@ -86,11 +79,8 @@ namespace BackupsExtra.Tests
             IStorageSaver singleSaver = new Single();
             IStorageSaver splitSaver = new Split();
             var fileSystem = new FileSystem(generalPath);
-            IRemoveRestorePoint dateRemove = new RemoveByDate();
-            IRemoveRestorePoint hybridRemove = new RemoveByHybrid();
             IRemoveRestorePoint numberRemove = new RemoveByNumber();
             IRestorePointRemover virtualRemove = new VirtualRemove();
-            IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
             IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
             IRecoveryProcessMethod virtualRecovery = new VirtualRecovery();
             IMergeProcessMethod virtualMerge = new VirtualMerge();
@@ -143,17 +133,22 @@ namespace BackupsExtra.Tests
             
             // я знаю, что сначала идёт логика, и только потом все ассёрты, но тут
             // так проще, а лишнюю запоминающую переменную не хочется, пощадите
-            singleBackupJob.Merge(restorePoint3, restorePoint5, true);
+            singleBackupJob.Merge(singleBackupJob, restorePoint3, restorePoint5, true);
             var countOfStorages = restorePoint5.GetRepositories()
                 .SelectMany(repository => repository.GetStorageList()).Count();
             Assert.AreEqual(countOfStorages, 2);
             
-            singleBackupJob.Merge(restorePoint5, restorePoint4, true);
+            singleBackupJob.Merge(splitBackupJob,restorePoint5, restorePoint4, true);
             countOfStorages = restorePoint4.GetRepositories()
                 .SelectMany(repository => repository.GetStorageList()).Count();
             Assert.AreEqual(countOfStorages, 3);
             
-            singleBackupJob.Merge(restorePoint4, restorePoint6, true);
+            splitBackupJob.Merge(singleBackupJob, restorePoint4, restorePoint3, true);
+            countOfStorages = restorePoint3.GetRepositories()
+                .SelectMany(repository => repository.GetStorageList()).Count();
+            Assert.AreEqual(countOfStorages, 3);
+            
+            splitBackupJob.Merge(splitBackupJob,restorePoint4, restorePoint6, true);
             countOfStorages = restorePoint6.GetRepositories()
                 .SelectMany(repository => repository.GetStorageList()).Count();
             Assert.AreEqual(countOfStorages, 3);

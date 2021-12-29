@@ -39,10 +39,10 @@ namespace BackupsExtra
                 numberRemove, // dateRemove / hybridRemove
                 localRemove,
                 dataService,
-                customPlacement, // originalPlace
+                customPlacement, // originalPlacement
                 localRecovery,
                 localMerge,
-                fileLogging,
+                fileLogging, // consoleLogging
                 false);
             var singleBackupJob = new ComplementedBackupJob(
                 singleSaver,
@@ -50,10 +50,10 @@ namespace BackupsExtra
                 numberRemove, // dateRemove / hybridRemove
                 localRemove,
                 dataService,
-                customPlacement, // originalPlace
+                customPlacement, // originalPlacement
                 localRecovery,
                 localMerge,
-                fileLogging,
+                fileLogging, // consoleLogging
                 false);
 
             const string filePath1 = @"C:\Users\danil\Desktop\name1.txt";
@@ -89,14 +89,15 @@ namespace BackupsExtra
             var restorePoint5 = singleBackupJob.CreateRestorePoint(localSaver, true, generalPath, "SingleRestorePoint");
             var restorePoint6 = splitBackupJob.CreateRestorePoint(localSaver, true, generalPath, "SplitRestorePoint");
 
-            singleBackupJob.Merge(restorePoint1, restorePoint3, true);
-            singleBackupJob.Merge(restorePoint3, restorePoint2, true);
-            singleBackupJob.Merge(restorePoint2, restorePoint4, true);
-
+            singleBackupJob.Merge(singleBackupJob, restorePoint1, restorePoint3, true);
+            singleBackupJob.Merge(splitBackupJob, restorePoint3, restorePoint2, true);
+            splitBackupJob.Merge(singleBackupJob, restorePoint4, restorePoint5, true);
+            splitBackupJob.Merge(splitBackupJob, restorePoint2, restorePoint6, true);
             var directory = new DirectoryInfo("D:/ITMOre than a university/1Menemi1/BackupsExtra/testDirectory");
             directory.Create();
-            singleBackupJob.Recovery(restorePoint3, true, "D:/ITMOre than a university/1Menemi1/BackupsExtra/testDirectory");
-            dataService.SaveData(true);
+            singleBackupJob.Recovery(restorePoint3, true, @"C:\Users\danil\Desktop\backup");
+
+            // dataService.SaveData(true);
         }
     }
 }
