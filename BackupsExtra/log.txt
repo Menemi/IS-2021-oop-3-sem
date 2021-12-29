@@ -97,3 +97,29 @@
 2021.12.29 01:09:59: Restore point 'SingleRestorePoint5' was successfully created
 2021.12.29 01:09:59: Restore point 'SplitRestorePoint6' was successfully created
 2021.12.29 01:09:59: Recovery of restore point 'SingleRestorePoint3' was successfully done!
+
+// снова отключил любое удаление рестор поинтов на время тестов функции мерджа
+// добавил тест, который при прошлой бы реализации работал некорректно (старая точка - сингл, новая - сплит)
+2021.12.30 01:59:17: Storage 'name1.txt' was successfully created in 'Backups.Split' backup job
+2021.12.30 01:59:17: Storage 'name2.txt' was successfully created in 'Backups.Split' backup job
+2021.12.30 01:59:17: Storage 'name3.txt' was successfully created in 'Backups.Split' backup job
+2021.12.30 01:59:17: Storage 'name1.txt' was successfully created in 'Backups.Single' backup job
+2021.12.30 01:59:17: Storage 'name2.txt' was successfully created in 'Backups.Single' backup job
+2021.12.30 01:59:17: Storage 'name3.txt' was successfully created in 'Backups.Single' backup job
+2021.12.30 01:59:17: Restore point 'SingleRestorePoint1' was successfully created
+2021.12.30 01:59:17: Restore point 'SplitRestorePoint2' was successfully created
+2021.12.30 01:59:17: Storage 'name3.txt' was successfully deleted from 'Backups.Split' backup job
+2021.12.30 01:59:17: Storage 'name3.txt' was successfully deleted from 'Backups.Single' backup job
+2021.12.30 01:59:17: Restore point 'SingleRestorePoint3' was successfully created
+2021.12.30 01:59:17: Restore point 'SplitRestorePoint4' was successfully created
+2021.12.30 01:59:17: Restore point 'SingleRestorePoint5' was successfully created
+2021.12.30 01:59:17: Restore point 'SplitRestorePoint6' was successfully created
+2021.12.30 01:59:17: Restore point 'SingleRestorePoint1' was successfully deleted
+2021.12.30 01:59:17: Merge of restore point 'SingleRestorePoint1' was successfully done into restore point 'SingleRestorePoint3'!
+2021.12.30 01:59:17: Restore point 'SingleRestorePoint3' was successfully deleted
+2021.12.30 01:59:17: Merge of restore point 'SingleRestorePoint3' was successfully done into restore point 'SplitRestorePoint2'!
+2021.12.30 01:59:17: Restore point 'SplitRestorePoint4' was successfully deleted
+2021.12.30 01:59:17: Merge of restore point 'SplitRestorePoint4' was successfully done into restore point 'SingleRestorePoint5'!
+2021.12.30 01:59:17: Restore point 'SplitRestorePoint2' was successfully deleted
+2021.12.30 01:59:17: Merge of restore point 'SplitRestorePoint2' was successfully done into restore point 'SplitRestorePoint6'!
+
