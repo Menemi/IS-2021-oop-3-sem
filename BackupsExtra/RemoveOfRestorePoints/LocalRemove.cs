@@ -12,10 +12,9 @@ namespace BackupsExtra.RemoveOfRestorePoints
             List<RestorePoint> restorePointsToDelete,
             bool isTimecodeOn)
         {
-            foreach (var directory in
-                restorePointsToDelete.Select(restorePoint =>
-                    new DirectoryInfo($"{restorePoint.Path}{restorePoint.Id.ToString()}")))
+            foreach (var restorePoint in restorePointsToDelete)
             {
+                var directory = new DirectoryInfo($"{restorePoint.Path}{restorePoint.Id}");
                 directory.Delete(true);
             }
 

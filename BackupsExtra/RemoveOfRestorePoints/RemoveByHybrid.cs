@@ -41,11 +41,16 @@ namespace BackupsExtra.RemoveOfRestorePoints
                     ++counter;
                 }
 
-                resultRemoveList = (
-                    from restorePoint1 in restorePointsToDelete
-                    from restorePoint2 in restorePointsToDelete2
-                    where restorePoint1 == restorePoint2
-                    select restorePoint1).ToList();
+                foreach (var restorePoint1 in restorePointsToDelete)
+                {
+                    foreach (var restorePoint2 in restorePointsToDelete2)
+                    {
+                        if (restorePoint1 == restorePoint2)
+                        {
+                            resultRemoveList.Add(restorePoint1);
+                        }
+                    }
+                }
             }
             else
             {
@@ -72,11 +77,16 @@ namespace BackupsExtra.RemoveOfRestorePoints
                 }
 
                 resultRemoveList = restorePointsToDelete;
-                resultRemoveList.AddRange(
-                    from restorePoint1 in restorePointsToDelete
-                    from restorePoint2 in restorePointsToDelete2
-                    where restorePoint1 != restorePoint2
-                    select restorePoint2);
+                foreach (var restorePoint1 in restorePointsToDelete)
+                {
+                    foreach (var restorePoint2 in restorePointsToDelete2)
+                    {
+                        if (restorePoint1 != restorePoint2)
+                        {
+                            resultRemoveList.Add(restorePoint2);
+                        }
+                    }
+                }
             }
 
             return restorePointRemover.RemoveRestorePoint(backupJob, resultRemoveList, isTimecodeOn);
