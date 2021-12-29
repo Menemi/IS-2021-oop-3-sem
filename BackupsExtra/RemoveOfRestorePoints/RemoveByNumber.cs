@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Backups;
-using BackupsExtra.Exception;
 
 namespace BackupsExtra.RemoveOfRestorePoints
 {

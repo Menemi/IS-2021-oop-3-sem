@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BackupsExtra.Exception
+﻿namespace BackupsExtra.Exception
 {
     public class BackupsExtraException : System.Exception
     {
