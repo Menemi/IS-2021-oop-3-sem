@@ -3,64 +3,62 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using Backups;
+using BackupsExtra.Exception;
 
 namespace BackupsExtra.Merge
 {
     public class LocalMerge : IMergeProcessMethod
     {
         public RestorePoint Merge(
-            ComplementedBackupJob backupJob,
+            ComplementedBackupJob backupJobOld,
+            ComplementedBackupJob backupJobNew,
             RestorePoint oldRestorePoint,
             RestorePoint newRestorePoint,
             bool isTimecodeOn)
         {
+            if (!backupJobOld.GetNewRestorePoints().Contains(oldRestorePoint) &&
+                !backupJobNew.GetNewRestorePoints().Contains(newRestorePoint))
+            {
+                throw new BackupsExtraException("One or more restore points are not contained in any backup job");
+            }
+
             if (oldRestorePoint.GetRepositories().Count == 1 ||
                 newRestorePoint.GetRepositories().Count == 1)
             {
                 if (oldRestorePoint.GetRepositories()[0].GetStorageList().Count != 1 ||
                     newRestorePoint.GetRepositories()[0].GetStorageList().Count != 1)
                 {
-                    var restorePointsToRemove = new List<RestorePoint> { oldRestorePoint };
-                    var restorePointDirectoryToRemove =
-                        new DirectoryInfo($"{oldRestorePoint.Path}{oldRestorePoint.Id}");
-                    restorePointDirectoryToRemove.Delete(true);
-                    backupJob.RemoveRestorePoints(restorePointsToRemove, isTimecodeOn);
+                    if (backupJobOld.GetRestorePoints().Contains(oldRestorePoint))
+                    {
+                        RemoveOldRestorePoint(backupJobOld, oldRestorePoint, isTimecodeOn);
+                        return newRestorePoint;
+                    }
+
+                    RemoveOldRestorePoint(backupJobNew, oldRestorePoint, isTimecodeOn);
                     return newRestorePoint;
                 }
             }
 
-            var newRepositories = new List<Repository>();
-            var oldZipFileCounter = 0;
-            var oldTempDirectory =
-                new DirectoryInfo(Path.Combine($"{oldRestorePoint.Path}{oldRestorePoint.Id}", "oldTemp"));
+            var oldFiles = new List<FileInfo>();
             foreach (var oldRepository in oldRestorePoint.GetRepositories())
             {
-                oldZipFileCounter++;
-
-                ZipFile.ExtractToDirectory(
-                    Path.Combine($"{oldRestorePoint.Path}{oldRestorePoint.Id}", $"Files_{oldZipFileCounter}.zip"),
-                    oldTempDirectory.FullName);
+                oldFiles.AddRange(oldRepository.GetStorageList());
             }
 
-            var newZipFileCounter = 0;
-            var newTempDirectory =
-                new DirectoryInfo(Path.Combine($"{newRestorePoint.Path}{newRestorePoint.Id}", "newTemp"));
+            var newFiles = new List<FileInfo>();
             foreach (var newRepository in newRestorePoint.GetRepositories())
             {
-                newZipFileCounter++;
-
-                ZipFile.ExtractToDirectory(
-                    Path.Combine($"{newRestorePoint.Path}{newRestorePoint.Id}", $"Files_{newZipFileCounter}.zip"),
-                    newTempDirectory.FullName);
+                newFiles.AddRange(newRepository.GetStorageList());
             }
 
-            foreach (var oldFile in oldTempDirectory.GetFileSystemInfos())
+            var newRepositories = new List<Repository>();
+            foreach (var oldFile in oldFiles)
             {
                 var oldFileInfo = new FileInfo(oldFile.FullName);
                 var checkingAvailabilityFlag = false;
                 var repository = new Repository();
 
-                foreach (var newFile in newTempDirectory.GetFileSystemInfos())
+                foreach (var newFile in newFiles)
                 {
                     if (oldFile.Name == newFile.Name)
                     {
@@ -86,35 +84,40 @@ namespace BackupsExtra.Merge
                 file.Delete();
             }
 
-            var tempDirectory = new DirectoryInfo(Path.Combine($"{newRestorePoint.Path}{newRestorePoint.Id}", "temp"));
-            tempDirectory.Create();
             var id = 0;
             foreach (var repository in newRepositories)
             {
                 newRestorePoint.AddRepository(repository);
+                var tempDirectory =
+                    new DirectoryInfo(Path.Combine($"{newRestorePoint.Path}{newRestorePoint.Id}", "temp"));
+                tempDirectory.Create();
+
                 foreach (var fileToAdd in repository.GetStorageList())
                 {
                     fileToAdd.CopyTo(Path.Combine(tempDirectory.FullName, fileToAdd.Name));
                 }
 
-                ++id;
                 ZipFile.CreateFromDirectory(
                     tempDirectory.FullName,
-                    Path.Combine($"{newRestorePoint.Path}{newRestorePoint.Id}", $"Files_{id}.zip"));
-                foreach (var file in tempDirectory.GetFiles())
-                {
-                    file.Delete();
-                }
+                    Path.Combine($"{newRestorePoint.Path}{newRestorePoint.Id}", $"Files_{++id}.zip"));
+                tempDirectory.Delete(true);
             }
 
-            var oldRestorePoints = new List<RestorePoint> { oldRestorePoint };
-            var oldRestorePointDirectory = new DirectoryInfo($"{oldRestorePoint.Path}{oldRestorePoint.Id}");
-            oldRestorePointDirectory.Delete(true);
-            backupJob.RemoveRestorePoints(oldRestorePoints, isTimecodeOn);
-            newTempDirectory.Delete(true);
-            tempDirectory.Delete(true);
-
+            RemoveOldRestorePoint(backupJobOld, oldRestorePoint, isTimecodeOn);
             return newRestorePoint;
+        }
+
+        private void RemoveOldRestorePoint(
+            ComplementedBackupJob backupJob,
+            RestorePoint oldRestorePoint,
+            bool isTimecodeOn)
+        {
+            var restorePointsToRemove = new List<RestorePoint> { oldRestorePoint };
+            var restorePointDirectoryToRemove =
+                new DirectoryInfo($"{oldRestorePoint.Path}{oldRestorePoint.Id}");
+
+            restorePointDirectoryToRemove.Delete(true);
+            backupJob.RemoveRestorePoints(restorePointsToRemove, isTimecodeOn);
         }
     }
 }

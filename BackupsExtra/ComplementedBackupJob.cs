@@ -169,9 +169,9 @@ namespace BackupsExtra
                 $"Recovery of restore point '{restorePointDirectory.Name}{restorePoint.Id}' was successfully done!");
         }
 
-        public void Merge(RestorePoint oldRestorePoint, RestorePoint newRestorePoint, bool isTimecodeOn)
+        public void Merge(ComplementedBackupJob backupJobNew, RestorePoint oldRestorePoint, RestorePoint newRestorePoint, bool isTimecodeOn)
         {
-            _mergeProcessMethod.Merge(this, oldRestorePoint, newRestorePoint, isTimecodeOn);
+            _mergeProcessMethod.Merge(this, backupJobNew, oldRestorePoint, newRestorePoint, isTimecodeOn);
 
             var oldRestorePointDirectory = new DirectoryInfo(oldRestorePoint.Path);
             var newRestorePointDirectory = new DirectoryInfo(newRestorePoint.Path);
