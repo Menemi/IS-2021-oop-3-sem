@@ -4,7 +4,7 @@ using Backups;
 
 namespace BackupsExtra.Recovery
 {
-    public class VirtualRecovery : IRecoveryType
+    public class VirtualRecovery : IRecoveryProcessMethod
     {
         public void Recovery(RestorePoint restorePoint, List<string> pathsToRecovery)
         {

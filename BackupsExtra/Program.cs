@@ -23,14 +23,14 @@ namespace BackupsExtra
             IRemoveRestorePoint hybridRemove = new RemoveByHybrid();
             IRemoveRestorePoint numberRemove = new RemoveByNumber();
             IRestorePointRemover localRemove = new LocalRemove();
-            var dataService = new DataService();
-            IRecoveryPlace originalPlace = new OriginalPlace();
-            IRecoveryPlace customPlace = new CustomPlace();
-            IRecoveryType localRecovery = new LocalRecovery();
+            IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
+            IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
+            IRecoveryProcessMethod localRecovery = new LocalRecovery();
             IMergeType localMerge = new LocalMerge();
             ILogging fileLogging = new FileLogging();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver localSaver = new LocalSaver();
+            var dataService = new DataService(fileLogging);
 
             // dataService.LoadData();
             var splitBackupJob = new ComplementedBackupJob(
@@ -39,7 +39,7 @@ namespace BackupsExtra
                 numberRemove, // dateRemove / hybridRemove
                 localRemove,
                 dataService,
-                customPlace, // originalPlace
+                customPlacement, // originalPlace
                 localRecovery,
                 localMerge,
                 fileLogging,
@@ -50,7 +50,7 @@ namespace BackupsExtra
                 numberRemove, // dateRemove / hybridRemove
                 localRemove,
                 dataService,
-                customPlace, // originalPlace
+                customPlacement, // originalPlace
                 localRecovery,
                 localMerge,
                 fileLogging,
@@ -96,7 +96,7 @@ namespace BackupsExtra
             var directory = new DirectoryInfo("D:/ITMOre than a university/1Menemi1/BackupsExtra/testDirectory");
             directory.Create();
             singleBackupJob.Recovery(restorePoint3, true, "D:/ITMOre than a university/1Menemi1/BackupsExtra/testDirectory");
-            dataService.SaveData();
+            dataService.SaveData(true);
         }
     }
 }

@@ -5,7 +5,7 @@ using Backups;
 
 namespace BackupsExtra.Recovery
 {
-    public class LocalRecovery : IRecoveryType
+    public class LocalRecovery : IRecoveryProcessMethod
     {
         public void Recovery(RestorePoint restorePoint, List<string> pathsToRecovery)
         {

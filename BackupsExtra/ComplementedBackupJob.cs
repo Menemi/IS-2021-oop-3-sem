@@ -31,10 +31,10 @@ namespace BackupsExtra
         private IRestorePointRemover _restorePointRemover;
 
         // to origin / custom place
-        private IRecoveryPlace _recoveryPlace;
+        private IRecoveryPlacement _recoveryPlacement;
 
         // virtual / local
-        private IRecoveryType _recoveryType;
+        private IRecoveryProcessMethod _recoveryProcessMethod;
 
         // virtual / local
         private IMergeType _mergeType;
@@ -49,8 +49,8 @@ namespace BackupsExtra
             IRemoveRestorePoint removeRestorePoint,
             IRestorePointRemover restorePointRemover,
             DataService dataService,
-            IRecoveryPlace recoveryPlace,
-            IRecoveryType recoveryType,
+            IRecoveryPlacement recoveryPlacement,
+            IRecoveryProcessMethod recoveryProcessMethod,
             IMergeType mergeType,
             ILogging logger,
             bool isAllLimitsOn)
@@ -62,8 +62,8 @@ namespace BackupsExtra
             _fileSystem = fileSystem;
             _isAllLimitsOn = isAllLimitsOn;
             _mergeType = mergeType;
-            _recoveryPlace = recoveryPlace;
-            _recoveryType = recoveryType;
+            _recoveryPlacement = recoveryPlacement;
+            _recoveryProcessMethod = recoveryProcessMethod;
             _logger = logger;
             _restorePointRemover = restorePointRemover;
             _removeRestorePoint = removeRestorePoint;
@@ -89,7 +89,7 @@ namespace BackupsExtra
             return _isAllLimitsOn;
         }
 
-        public void RemoveRestorePoints(List<RestorePoint> restorePoints, bool isTimecodeOn)
+        public List<RestorePoint> RemoveRestorePoints(List<RestorePoint> restorePoints, bool isTimecodeOn)
         {
             foreach (var restorePoint in restorePoints)
             {
@@ -100,6 +100,8 @@ namespace BackupsExtra
                     isTimecodeOn,
                     $"Restore point '{restorePointDirectory.Name}{restorePoint.Id}' was successfully deleted");
             }
+
+            return _restorePoints;
         }
 
         public void SetRemoveRestorePoint(IRemoveRestorePoint removeRestorePoint)
@@ -112,14 +114,14 @@ namespace BackupsExtra
             _restorePointRemover = restorePointRemover;
         }
 
-        public void SetRecoveryPlace(IRecoveryPlace recoveryPlace)
+        public void SetRecoveryPlace(IRecoveryPlacement recoveryPlacement)
         {
-            _recoveryPlace = recoveryPlace;
+            _recoveryPlacement = recoveryPlacement;
         }
 
-        public void SetRecoveryType(IRecoveryType recoveryType)
+        public void SetRecoveryType(IRecoveryProcessMethod recoveryProcessMethod)
         {
-            _recoveryType = recoveryType;
+            _recoveryProcessMethod = recoveryProcessMethod;
         }
 
         public FileInfo AddJobObject(bool isTimecodeOn, string filePath)
@@ -159,7 +161,7 @@ namespace BackupsExtra
 
         public void Recovery(RestorePoint restorePoint, bool isTimecodeOn, string pathToRecovery = null)
         {
-            _recoveryPlace.Recovery(_recoveryType, restorePoint, pathToRecovery);
+            _recoveryPlacement.Recovery(_recoveryProcessMethod, restorePoint, pathToRecovery);
 
             var restorePointDirectory = new DirectoryInfo(restorePoint.Path);
             _logger.CreateLog(

@@ -25,13 +25,13 @@ namespace BackupsExtra.Tests
             IRemoveRestorePoint hybridRemove = new RemoveByHybrid();
             IRemoveRestorePoint numberRemove = new RemoveByNumber();
             IRestorePointRemover virtualRemove = new VirtualRemove();
-            var dataService = new DataService();
-            IRecoveryPlace originalPlace = new OriginalPlace();
-            IRecoveryPlace customPlace = new CustomPlace();
-            IRecoveryType virtualRecovery = new VirtualRecovery();
+            IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
+            IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
+            IRecoveryProcessMethod virtualRecovery = new VirtualRecovery();
             IMergeType virtualMerge = new VirtualMerge();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver virtualSaver = new VirtualSaver();
+            var dataService = new DataService(consoleLogging);
             
             var splitBackupJob = new ComplementedBackupJob(
                 splitSaver,
@@ -39,7 +39,7 @@ namespace BackupsExtra.Tests
                 numberRemove, // dateRemove / hybridRemove
                 virtualRemove,
                 dataService,
-                customPlace, // originalPlace
+                customPlacement, // originalPlace
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
@@ -50,7 +50,7 @@ namespace BackupsExtra.Tests
                 numberRemove, // dateRemove / hybridRemove
                 virtualRemove,
                 dataService,
-                customPlace, // originalPlace
+                customPlacement, // originalPlace
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
@@ -90,13 +90,13 @@ namespace BackupsExtra.Tests
             IRemoveRestorePoint hybridRemove = new RemoveByHybrid();
             IRemoveRestorePoint numberRemove = new RemoveByNumber();
             IRestorePointRemover virtualRemove = new VirtualRemove();
-            var dataService = new DataService();
-            IRecoveryPlace originalPlace = new OriginalPlace();
-            IRecoveryPlace customPlace = new CustomPlace();
-            IRecoveryType virtualRecovery = new VirtualRecovery();
+            IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
+            IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
+            IRecoveryProcessMethod virtualRecovery = new VirtualRecovery();
             IMergeType virtualMerge = new VirtualMerge();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver virtualSaver = new VirtualSaver();
+            var dataService = new DataService(consoleLogging);
             
             var splitBackupJob = new ComplementedBackupJob(
                 splitSaver,
@@ -104,7 +104,7 @@ namespace BackupsExtra.Tests
                 numberRemove, // dateRemove / hybridRemove
                 virtualRemove,
                 dataService,
-                customPlace, // originalPlace
+                customPlacement, // originalPlace
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
@@ -115,7 +115,7 @@ namespace BackupsExtra.Tests
                 numberRemove, // dateRemove / hybridRemove
                 virtualRemove,
                 dataService,
-                customPlace, // originalPlace
+                customPlacement, // originalPlace
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
