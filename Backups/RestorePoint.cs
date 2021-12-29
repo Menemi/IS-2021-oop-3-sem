@@ -39,14 +39,17 @@ namespace Backups
         {
             foreach (var rep in repository)
             {
-                if (repositories.Contains(rep))
+                if (rep == null)
                 {
-                    repositories.Remove(rep);
+                    throw new BackupsException("Repository can't be null");
                 }
-                else
+
+                if (!repositories.Contains(rep))
                 {
                     throw new BackupsException("You can't remove non-existent repository");
                 }
+
+                repositories.Remove(rep);
             }
         }
     }
