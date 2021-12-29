@@ -5,7 +5,7 @@ using Backups;
 
 namespace BackupsExtra.Merge
 {
-    public class VirtualMerge : IMergeType
+    public class VirtualMerge : IMergeProcessMethod
     {
         public RestorePoint Merge(
             ComplementedBackupJob backupJob,

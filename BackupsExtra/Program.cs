@@ -26,7 +26,7 @@ namespace BackupsExtra
             IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
             IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
             IRecoveryProcessMethod localRecovery = new LocalRecovery();
-            IMergeType localMerge = new LocalMerge();
+            IMergeProcessMethod localMerge = new LocalMerge();
             ILogging fileLogging = new FileLogging();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver localSaver = new LocalSaver();

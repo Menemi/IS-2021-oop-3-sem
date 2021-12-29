@@ -28,7 +28,7 @@ namespace BackupsExtra.Tests
             IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
             IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
             IRecoveryProcessMethod virtualRecovery = new VirtualRecovery();
-            IMergeType virtualMerge = new VirtualMerge();
+            IMergeProcessMethod virtualMerge = new VirtualMerge();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver virtualSaver = new VirtualSaver();
             var dataService = new DataService(consoleLogging);
@@ -93,7 +93,7 @@ namespace BackupsExtra.Tests
             IRecoveryPlacement originalPlacement = new OriginalPlacementRecovery();
             IRecoveryPlacement customPlacement = new CustomPlacementRecovery();
             IRecoveryProcessMethod virtualRecovery = new VirtualRecovery();
-            IMergeType virtualMerge = new VirtualMerge();
+            IMergeProcessMethod virtualMerge = new VirtualMerge();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver virtualSaver = new VirtualSaver();
             var dataService = new DataService(consoleLogging);

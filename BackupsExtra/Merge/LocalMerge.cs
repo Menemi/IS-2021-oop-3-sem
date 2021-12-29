@@ -6,7 +6,7 @@ using Backups;
 
 namespace BackupsExtra.Merge
 {
-    public class LocalMerge : IMergeType
+    public class LocalMerge : IMergeProcessMethod
     {
         public RestorePoint Merge(
             ComplementedBackupJob backupJob,

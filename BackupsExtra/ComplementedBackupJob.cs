@@ -37,7 +37,7 @@ namespace BackupsExtra
         private IRecoveryProcessMethod _recoveryProcessMethod;
 
         // virtual / local
-        private IMergeType _mergeType;
+        private IMergeProcessMethod _mergeProcessMethod;
 
         private ILogging _logger;
 
@@ -51,7 +51,7 @@ namespace BackupsExtra
             DataService dataService,
             IRecoveryPlacement recoveryPlacement,
             IRecoveryProcessMethod recoveryProcessMethod,
-            IMergeType mergeType,
+            IMergeProcessMethod mergeProcessMethod,
             ILogging logger,
             bool isAllLimitsOn)
             : base(storageSaver, fileSystem)
@@ -61,7 +61,7 @@ namespace BackupsExtra
             _storageSaver = storageSaver;
             _fileSystem = fileSystem;
             _isAllLimitsOn = isAllLimitsOn;
-            _mergeType = mergeType;
+            _mergeProcessMethod = mergeProcessMethod;
             _recoveryPlacement = recoveryPlacement;
             _recoveryProcessMethod = recoveryProcessMethod;
             _logger = logger;
@@ -171,7 +171,7 @@ namespace BackupsExtra
 
         public void Merge(RestorePoint oldRestorePoint, RestorePoint newRestorePoint, bool isTimecodeOn)
         {
-            _mergeType.Merge(this, oldRestorePoint, newRestorePoint, isTimecodeOn);
+            _mergeProcessMethod.Merge(this, oldRestorePoint, newRestorePoint, isTimecodeOn);
 
             var oldRestorePointDirectory = new DirectoryInfo(oldRestorePoint.Path);
             var newRestorePointDirectory = new DirectoryInfo(newRestorePoint.Path);
