@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Backups;
 
 namespace BackupsExtra.Recovery
@@ -18,6 +17,8 @@ namespace BackupsExtra.Recovery
                 }
             }
 
+            var recoveryDirectory = new DirectoryInfo(pathToRecovery);
+            recoveryDirectory.Create();
             recoveryProcessMethod.Recovery(restorePoint, pathsToRecovery);
         }
     }
