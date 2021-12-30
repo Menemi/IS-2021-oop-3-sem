@@ -37,6 +37,11 @@ namespace Backups
 
         public void RemoveRepositories(List<Repository> repository)
         {
+            if (repository == null)
+            {
+                throw new BackupsException("Repository list can't be null");
+            }
+
             foreach (var rep in repository)
             {
                 if (rep == null)
