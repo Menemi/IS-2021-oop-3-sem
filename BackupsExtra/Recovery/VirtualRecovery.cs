@@ -19,8 +19,7 @@ namespace BackupsExtra.Recovery
                         directoryToRecovery.Create();
                     }
 
-                    var fileInfo = new FileInfo(file.FullName);
-                    fileInfo.CopyTo(Path.Combine(pathsToRecovery[i], fileInfo.Name));
+                    file.CopyTo(Path.Combine(pathsToRecovery[i], file.Name));
                     ++i;
                 }
             }
