@@ -17,20 +17,7 @@ namespace BackupsExtra.RemoveOfRestorePoints
                 return restorePointRemover.RemoveRestorePoint(backupJob, new List<RestorePoint>(), isTimecodeOn);
             }
 
-            var counter = 0;
-            var restorePointsToDelete = new List<RestorePoint>();
-            foreach (var restorePoint in backupJob.GetNewRestorePoints())
-            {
-                if (backupJob.GetNewRestorePoints().Count - counter == _countCheck)
-                {
-                    break;
-                }
-
-                restorePointsToDelete.Add(restorePoint);
-                ++counter;
-            }
-
-            return restorePointRemover.RemoveRestorePoint(backupJob, restorePointsToDelete, isTimecodeOn);
+            return restorePointRemover.RemoveRestorePoint(backupJob, new List<RestorePoint>() { backupJob.GetNewRestorePoints()[0] }, isTimecodeOn);
         }
     }
 }
