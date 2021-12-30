@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Backups;
 using Backups.Interfaces;
 using BackupsExtra.Logging;
@@ -6,6 +7,7 @@ using BackupsExtra.Merge;
 using BackupsExtra.Recovery;
 using BackupsExtra.RemoveOfRestorePoints;
 using NUnit.Framework;
+using Single = Backups.Single;
 
 namespace BackupsExtra.Tests
 {
@@ -26,6 +28,9 @@ namespace BackupsExtra.Tests
             IMergeProcessMethod virtualMerge = new VirtualMerge();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver virtualSaver = new VirtualSaver();
+            const int countCheck = 2;
+            var dateCheck = DateTime.Now.Date.AddDays(-3);
+            const bool isAllLimitsOn = false;
             var dataService = new DataService(consoleLogging);
             
             var splitBackupJob = new ComplementedBackupJob(
@@ -38,7 +43,9 @@ namespace BackupsExtra.Tests
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
-                false);
+                countCheck,
+                dateCheck,
+                isAllLimitsOn);
             var singleBackupJob = new ComplementedBackupJob(
                 singleSaver,
                 fileSystem,
@@ -49,7 +56,9 @@ namespace BackupsExtra.Tests
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
-                false);
+                countCheck,
+                dateCheck,
+                isAllLimitsOn);
 
             const string filePath1 = @"C:\Users\danil\Desktop\name1.txt";
             const string filePath2 = @"C:\Users\danil\Desktop\name2.txt";
@@ -86,6 +95,9 @@ namespace BackupsExtra.Tests
             IMergeProcessMethod virtualMerge = new VirtualMerge();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver virtualSaver = new VirtualSaver();
+            const int countCheck = 2;
+            var dateCheck = DateTime.Now.Date.AddDays(-3);
+            const bool isAllLimitsOn = false;
             var dataService = new DataService(consoleLogging);
             
             var splitBackupJob = new ComplementedBackupJob(
@@ -98,7 +110,9 @@ namespace BackupsExtra.Tests
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
-                false);
+                countCheck,
+                dateCheck,
+                isAllLimitsOn);
             var singleBackupJob = new ComplementedBackupJob(
                 singleSaver,
                 fileSystem,
@@ -109,7 +123,9 @@ namespace BackupsExtra.Tests
                 virtualRecovery,
                 virtualMerge,
                 consoleLogging,
-                false);
+                countCheck,
+                dateCheck,
+                isAllLimitsOn);
 
             const string filePath1 = @"C:\Users\danil\Desktop\name1.txt";
             const string filePath2 = @"C:\Users\danil\Desktop\name2.txt";

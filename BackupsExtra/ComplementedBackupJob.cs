@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -41,8 +42,6 @@ namespace BackupsExtra
 
         private ILogging _logger;
 
-        private bool _isAllLimitsOn;
-
         public ComplementedBackupJob(
             IStorageSaver storageSaver,
             FileSystem fileSystem,
@@ -53,6 +52,8 @@ namespace BackupsExtra
             IRecoveryProcessMethod recoveryProcessMethod,
             IMergeProcessMethod mergeProcessMethod,
             ILogging logger,
+            int removeCountCheck,
+            DateTime removeDateCheck,
             bool isAllLimitsOn)
             : base(storageSaver, fileSystem)
         {
@@ -60,7 +61,9 @@ namespace BackupsExtra
             _jobObjects = new List<FileInfo>();
             _storageSaver = storageSaver;
             _fileSystem = fileSystem;
-            _isAllLimitsOn = isAllLimitsOn;
+            IsAllLimitsOn = isAllLimitsOn;
+            RemoveDateCheck = removeDateCheck;
+            RemoveCountCheck = removeCountCheck;
             _mergeProcessMethod = mergeProcessMethod;
             _recoveryPlacement = recoveryPlacement;
             _recoveryProcessMethod = recoveryProcessMethod;
@@ -73,6 +76,12 @@ namespace BackupsExtra
 
         public string Name { get; }
 
+        public int RemoveCountCheck { get; }
+
+        public DateTime RemoveDateCheck { get; }
+
+        public bool IsAllLimitsOn { get; }
+
         [DataMember]
         public string[] JobObjectsPaths
         {
@@ -82,11 +91,6 @@ namespace BackupsExtra
         public ReadOnlyCollection<RestorePoint> GetNewRestorePoints()
         {
             return _restorePoints.AsReadOnly();
-        }
-
-        public bool GetIsAllLimitsOn()
-        {
-            return _isAllLimitsOn;
         }
 
         public List<RestorePoint> RemoveRestorePoints(List<RestorePoint> restorePoints, bool isTimecodeOn)

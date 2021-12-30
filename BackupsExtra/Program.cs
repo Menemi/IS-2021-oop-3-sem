@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Backups;
@@ -30,6 +31,9 @@ namespace BackupsExtra
             ILogging fileLogging = new FileLogging();
             ILogging consoleLogging = new ConsoleLogging();
             IBackupSaver localSaver = new LocalSaver();
+            const int countCheck = 2;
+            var dateCheck = DateTime.Now.Date.AddDays(-3);
+            const bool isAllLimitsOn = false;
             var dataService = new DataService(fileLogging);
 
             // dataService.LoadData();
@@ -43,7 +47,9 @@ namespace BackupsExtra
                 localRecovery,
                 localMerge,
                 fileLogging, // consoleLogging
-                false);
+                countCheck,
+                dateCheck,
+                isAllLimitsOn);
             var singleBackupJob = new ComplementedBackupJob(
                 singleSaver,
                 fileSystem,
@@ -54,7 +60,9 @@ namespace BackupsExtra
                 localRecovery,
                 localMerge,
                 fileLogging, // consoleLogging
-                false);
+                countCheck,
+                dateCheck,
+                isAllLimitsOn);
 
             const string filePath1 = @"C:\Users\danil\Desktop\name1.txt";
             const string filePath2 = @"C:\Users\danil\Desktop\name2.txt";
@@ -93,11 +101,12 @@ namespace BackupsExtra
             singleBackupJob.Merge(splitBackupJob, restorePoint3, restorePoint2, true);
             splitBackupJob.Merge(singleBackupJob, restorePoint4, restorePoint5, true);
             splitBackupJob.Merge(splitBackupJob, restorePoint2, restorePoint6, true);
+
             var directory = new DirectoryInfo("D:/ITMOre than a university/1Menemi1/BackupsExtra/testDirectory");
             directory.Create();
-            singleBackupJob.Recovery(restorePoint3, true, @"C:\Users\danil\Desktop\backup");
+            singleBackupJob.Recovery(restorePoint6, true, @"C:\Users\danil\Desktop\backup");
 
-            // dataService.SaveData(true);
+            dataService.SaveData(true);
         }
     }
 }

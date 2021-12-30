@@ -8,19 +8,16 @@ namespace BackupsExtra.RemoveOfRestorePoints
 {
     public class RemoveByHybrid : IRemoveRestorePoint
     {
-        private readonly DateTime _dateCheck = DateTime.Now.Date.AddDays(-3);
-        private readonly int _countCheck = 2;
-
         public List<RestorePoint> RemoveRestorePoint(
             IRestorePointRemover restorePointRemover,
             ComplementedBackupJob backupJob,
             bool isTimecodeOn)
         {
             var resultRemoveList = new List<RestorePoint>();
-            if (backupJob.GetIsAllLimitsOn())
+            if (backupJob.IsAllLimitsOn)
             {
                 var restorePointsToDelete = backupJob.GetNewRestorePoints()
-                    .Where(restorePoint => restorePoint.CreationTime.Date <= _dateCheck).ToList();
+                    .Where(restorePoint => restorePoint.CreationTime.Date <= backupJob.RemoveDateCheck).ToList();
 
                 if (restorePointsToDelete.Count == backupJob.GetNewRestorePoints().Count)
                 {
@@ -32,7 +29,7 @@ namespace BackupsExtra.RemoveOfRestorePoints
                 var restorePointsToDelete2 = new List<RestorePoint>();
                 foreach (var restorePoint in backupJob.GetNewRestorePoints())
                 {
-                    if (backupJob.GetNewRestorePoints().Count - counter == _countCheck)
+                    if (backupJob.GetNewRestorePoints().Count - counter == backupJob.RemoveCountCheck)
                     {
                         break;
                     }
@@ -55,7 +52,7 @@ namespace BackupsExtra.RemoveOfRestorePoints
             else
             {
                 var restorePointsToDelete = backupJob.GetNewRestorePoints()
-                    .Where(restorePoint => restorePoint.CreationTime.Date <= _dateCheck).ToList();
+                    .Where(restorePoint => restorePoint.CreationTime.Date <= backupJob.RemoveDateCheck).ToList();
 
                 if (restorePointsToDelete.Count == backupJob.GetNewRestorePoints().Count)
                 {
@@ -67,7 +64,7 @@ namespace BackupsExtra.RemoveOfRestorePoints
                 var restorePointsToDelete2 = new List<RestorePoint>();
                 foreach (var restorePoint in backupJob.GetNewRestorePoints())
                 {
-                    if (counter == _countCheck)
+                    if (counter == backupJob.RemoveCountCheck)
                     {
                         break;
                     }
