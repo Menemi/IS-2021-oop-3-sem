@@ -89,6 +89,12 @@ namespace BackupsExtra.RemoveOfRestorePoints
                 }
             }
 
+            if (resultRemoveList.Count == backupJob.GetNewRestorePoints().Count)
+            {
+                throw new BackupsExtraException(
+                    $"The count of restore points is {backupJob.GetNewRestorePoints().Count}, you can't remove all of them!");
+            }
+
             return restorePointRemover.RemoveRestorePoint(backupJob, resultRemoveList, isTimecodeOn);
         }
     }
